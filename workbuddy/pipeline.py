@@ -14,6 +14,7 @@ from urllib.parse import quote
 
 from workbuddy.protocol import create_task, validate_result
 from workbuddy.run import read, save
+from workbuddy.timing import observe as observe_timing
 
 
 def utcnow():
@@ -302,6 +303,12 @@ class Pipeline:
                 task = {'id': job.name, 'created_at': request['created_at'], 'text': request['transcript'],
                         'state': state['state'], 'message': state.get('message', ''), 'files': [], 'questions': [],
                         'automatic_print_eligible': request['created_at'] >= self.activated}
+                try:
+                    timing = observe_timing(job, request, state)
+                    if timing:
+                        task['timing'] = timing
+                except (OSError, ValueError, TypeError):
+                    pass  # Diagnostics must never prevent display/ringing/printing.
                 progress = job / 'progress.json'
                 if progress.is_file() and progress.stat().st_size < 32768:
                     try:

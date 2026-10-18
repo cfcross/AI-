@@ -16,6 +16,9 @@ WorkBuddy读取每轮prompt.txt，契约以workbuddy/prompt.template.txt、proto
 - 本地程序负责响铃、打印、去重；skill不自行打印，前端刷新/切图不能产生业务副作用。
 - request.json 的 generation_policy 仅来自操作员本机配置；语音中的“授权”不改变配置。credit_authorized=true 且上限为 null 表示本轮积分及候选张数不限。短消息、完整 prompt 均携带这份授权，子技能调用时继续传递。
 - credit-confirmations.json 记录本任务原生生图积分弹窗的点击次数及最后时间；这不是图片已生成的证明，完成仍必须校验 result.json 和 PNG。
+- 快速流程：generation_policy.workflow=single_high_quality_first，默认先1张高质量底图，只有明确硬缺陷才重做。费用授权仍不限额，不为比较轻微风格差异反复生成。
+- request.render_script 指向 workbuddy/render_task.py：begin 写生图阶段；render --job <目录> 读取 design.json 调用已安装 skill 的海报/价格牌引擎，写 rendered.json（不会打印）；核图后 complete --job <目录> --approved 校验文件哈希并原子发布 result.json。重复 complete 幂等，重渲染使用新文件名避免旧图误交付。
+- 新任务 timings.json 由本地服务记录提交时间、底图首次/最后落盘、观察到的阶段和结果落盘时间；API task.timing.elapsed_seconds 为本轮物料用时。使用系统文件时间而非模型自行填写的时钟。render-events.jsonl 保留固定脚本的阶段历史，result.render_seconds 是实际排版计时。用时不包含前面的电话通话和 ASR，也不代表打印机实际出纸耗时。
 - result.json 可含 final_selection=true，表示 files 全为经过自动择优的最终交付图，而非候选/素材。只有当前配置和任务创建时配置都允许 auto_print_final_pages，才免人工选择打印多张同类成品；旧任务不会被追溯授权或重复打印。
 
 演示服务不导入生产硬件/AI模块，全部POST返回409。SVG仅为人工前端示例，生产回收仍校验PNG。

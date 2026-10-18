@@ -55,6 +55,8 @@ def transition(job, state, **values):
     path = job / 'state.json'
     old = read(path)
     value = {**old, **values, 'state': state, 'updated_at': datetime.now(timezone.utc).isoformat()}
+    if state == 'submitted':
+        value.setdefault('submitted_at', value['updated_at'])
     save(path, value)
     print(json.dumps({'task_id': value['task_id'], 'state': state, 'message': value.get('message', '')}, ensure_ascii=False), flush=True)
     return value
@@ -108,6 +110,7 @@ def build_message(job, request):
             f"项目执行授权：{generation_instruction(request.get('generation_policy', {}))}\n"
             f"座机识别原文：{spoken}\n"
             "请使用已选中的 market-stall-demo 技能，判断用户要价格牌、海报还是两者；按任务文件的规则实际调用技能生成图片。"
+            "直接用任务提供的 render_script，先1张高质量图，不做候选合集、不读引擎源码。"
             "店名缺失按技能代拟，没照片按授权自动生成底图；价格和单位不猜。"
             "不要用 AskQuestion 等待确认；缺硬信息写 needs_input，工具无法恢复写 failed 后结束。"
             "按任务文件写 progress.json 更新阶段，完成后写 result.json。图片由本地网页展示和打印，请勿自动打开图片预览、切换浏览器或自行打印。")

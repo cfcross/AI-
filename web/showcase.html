@@ -10,6 +10,7 @@
 <div class="spoken"><div class="eyebrow" id="spokenLabel">最近一次识别</div><p id="transcript">例如：苹果每斤二十元，帮我做一张价格牌。</p><span class="muted" id="recordMeta">说完后放下听筒</span></div>
 <div class="steps"><div class="step" id="step0">① 语音识别</div><div class="step" id="step1">② 整理需求</div><div class="step" id="step2">③ 生成图片</div><div class="step" id="step3">④ 响铃与打印</div></div>
 <div id="progress" class="progress" aria-live="polite">等你打来第一通电话</div>
+<div id="elapsed" class="muted"></div>
 <div class="outputs"><p id="ring">电话提醒：等待生成完成</p><p id="printing">A4 彩色双面 · 正反同图</p></div>
 <details><summary>本地运行记录</summary><div id="history"></div></details>
 <footer>识别文字与图片均保存在本机 · 商品、价格、单位请核对口述内容</footer>
@@ -39,6 +40,7 @@ function render(s){
  const interrupted=['failed','timed_out','submission_unknown','waiting_desktop'].includes(task?.state);
  $('progress').textContent=busy?(s.phase==='recording'?'请说完后正常挂机':'正在将本轮录音转成文字'):task?(done?'图片已生成\n可在右侧查看完整作品。':task.state==='needs_input'?(task.questions||[]).join('；'):interrupted?(states[task.state]+'\n'+(task.message||'')):(stages[task.progress?.stage]||states[task.state]||'处理中')):'识别后会自动调用 market-stall-demo 生成图片';
  $('ring').textContent='电话提醒：'+(task?.notification?.message||'图片生成后响铃');
+ const elapsed=Math.floor(task?.timing?.elapsed_seconds||0);$('elapsed').textContent=task?.timing?'本轮物料用时 '+Math.floor(elapsed/60)+' 分 '+elapsed%60+' 秒':'';
  $('printing').textContent=task?.printing?.state==='spooled'?'已提交打印 · A4 彩色双面 · 请在打印机取纸':task?.printing?.message||'A4 彩色双面 · 正反同图';
  const completed=tasks.find(t=>t.state==='completed'&&t.files?.length);
  if(completed){
