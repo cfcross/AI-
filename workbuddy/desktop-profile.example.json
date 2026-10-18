@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "minimize_after_send": false,
+  "show_display_after_send": true,
+  "skill_name": "market-stall-demo",
+  "skill_command": "/market-stall-demo",
+  "empty_placeholders": ["今天帮你做些什么？@ 添加上下文，/调用技能与指令"],
+  "target": {
+    "executable_relative_to_localappdata": "Programs/WorkBuddy/WorkBuddy.exe",
+    "window_title_pattern": "WorkBuddy",
+    "selectors": {
+      "new_task": {"types": ["TabItem", "Button"], "name": "新建任务"},
+      "composer": {"type": "Edit", "name": ""},
+      "send": {"type": "Button", "name": "发送"},
+      "skill_menu_option": {"type": "ListItem", "name_re": "market-stall-demo(?: |$).*"},
+      "selected_skill": {"type": "Button", "name": "market-stall-demo"}
+    }
+  },
+  "send_confirmation_timeout_seconds": 20,
+  "generation_timeout_seconds": 600
+}

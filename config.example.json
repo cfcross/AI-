@@ -1,0 +1,51 @@
+{
+    "phone":  {
+                  "local_address":  "192.168.82.1",
+                  "device_address":  "192.168.82.100",
+                  "sip_port":  5090,
+                  "device_sip_port":  5060,
+                  "rtp_port":  15004,
+                  "max_seconds":  120,
+                  "media_timeout_seconds":  15
+              },
+    "asr":  {
+                "model_path":  "models/Qwen3-ASR-1.7B",
+                "device":  "auto",
+                "dtype":  "auto",
+                "language":  null,
+                "context":  "",
+                "max_new_tokens":  1024,
+                "silence_rms":  0.001,
+                "simplified":  true
+            },
+    "display":  {
+                    "port":  8766,
+                    "open_browser":  true,
+                    "workbuddy_showcase":  false
+                },
+    "storage":  {
+                    "directory":  "data",
+                    "keep_audio":  true
+                },
+    "runtime":  {
+                    "node":  "node"
+                },
+    "automation":  {
+                       "enabled":  false
+                   },
+    "notifications":  {
+                          "enabled":  false,
+                          "ring_seconds":  8
+                      },
+    "printing":  {
+                     "enabled":  false,
+                     "printer_name":  "",
+                     "duplex":  "LongEdge",
+                     "layout":  "Cover",
+                     "back_content":  "same_image",
+                     "offset_x_mm":  0,
+                     "offset_y_mm":  0,
+                     "back_offset_x_mm":  0,
+                     "back_offset_y_mm":  0
+                 }
+}

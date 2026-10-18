@@ -1,0 +1,35 @@
+[
+  {
+    "key": "p1_laoli",
+    "name": "老李鱼档",
+    "en": "LAO LI FISH STALL",
+    "cat": "海鲜 · 水产区",
+    "no": "NO. 01 — SEAFOOD",
+    "line": "凌晨到货 · 卖完收档",
+    "side1": "凌晨到货",
+    "side2": "卖完收档",
+    "top_cn": "蛇口市场"
+  },
+  {
+    "key": "p2_chenji",
+    "name": "陈记烧腊",
+    "en": "CHEN JI SIU MEI",
+    "cat": "烧腊 · 熟食区",
+    "no": "NO. 02 — SIU MEI",
+    "line": "明炉现烧 · 每日出炉",
+    "side1": "明炉现烧",
+    "side2": "每日两炉",
+    "top_cn": "蛇口市场"
+  },
+  {
+    "key": "p3_azhen",
+    "name": "阿珍菜档",
+    "en": "A ZHEN GREENS",
+    "cat": "时蔬 · 蔬菜区",
+    "no": "NO. 03 — GREENS",
+    "line": "当日鲜摘 · 平价走量",
+    "side1": "当日鲜摘",
+    "side2": "平价走量",
+    "top_cn": "蛇口市场"
+  }
+]

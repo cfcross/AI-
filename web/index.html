@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI 打印机 · 电话生成物料</title>
+<style>
+:root{color-scheme:light;--ink:#172d2a;--green:#17604d;--muted:#62726d}*{box-sizing:border-box}body{margin:0;background:#f2f3ee;color:var(--ink);font:16px/1.6 "Microsoft YaHei",sans-serif}main{max-width:1120px;margin:auto;padding:40px 28px}header{display:flex;justify-content:space-between;align-items:center;gap:20px}h1{font-size:28px;margin:0}small,.sub{color:var(--muted)}.tag{border:1px solid #cad6cb;border-radius:30px;padding:5px 14px;background:#fff}.status{display:flex;align-items:center;gap:16px;margin:30px 0 18px;padding:22px 26px;border-radius:18px;background:#e0ece3}.dot{width:14px;height:14px;border-radius:50%;background:var(--green);flex-shrink:0}.status[data-phase="recording"] .dot{background:#df673c;animation:pulse 1s infinite}.status[data-phase="error"]{background:#f9e2dc}.status[data-phase="error"] .dot{background:#bd462d}@keyframes pulse{50%{opacity:.3}}.title{font-size:23px;font-weight:bold}.metrics{display:flex;gap:24px;margin-left:auto;color:var(--muted);white-space:nowrap}.card{padding:28px 32px;border:1px solid #dce1d7;border-radius:18px;background:white;margin-bottom:20px}.label{font-size:13px;letter-spacing:2px;color:var(--muted)}#text{font-size:34px;line-height:1.65;min-height:170px;margin:18px 0 22px;white-space:pre-wrap;overflow-wrap:anywhere}button{white-space:nowrap;flex-shrink:0;cursor:pointer;background:var(--green);color:white;border:0;padding:10px 20px;border-radius:9px;font:inherit}button:disabled{opacity:.4;cursor:default}.row{display:flex;align-items:center;justify-content:space-between;gap:14px}.history-item{padding:18px 0;border-bottom:1px solid #e3e7dd}.history-item:last-child{border-bottom:0}.history-item p{margin:6px 0;font-size:19px;white-space:pre-wrap;overflow-wrap:anywhere}.error{color:#a33b26}.steps{display:flex;justify-content:space-around;padding:8px 0 26px;color:var(--muted)}footer{font-size:13px;overflow-wrap:anywhere}#connection{color:#a33b26;font-weight:bold}@media(max-width:700px){main{padding:24px 16px}header,.status{align-items:flex-start;flex-wrap:wrap}.metrics{margin-left:30px}#text{font-size:25px}.card{padding:22px}.steps{font-size:13px}}
+.task{border-top:1px solid #dce1d7;padding:22px 0}.task:first-child{border-top:0}.task-head{display:flex;gap:12px;justify-content:space-between;align-items:center;flex-wrap:wrap}.badge{padding:4px 12px;border-radius:20px;background:#e0ece3;font-size:14px}.task p{white-space:pre-wrap;overflow-wrap:anywhere}.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin:16px 0}.gallery figure{margin:0;border:1px solid #dce1d7;border-radius:12px;padding:12px}.gallery img{width:100%;height:300px;object-fit:contain;background:#f4f5f0}.gallery label{display:block;font-size:14px}.progress-note{border-left:3px solid #17604d;padding-left:12px}.task-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.secondary{background:#e0ece3;color:#17604d}textarea{width:100%;min-height:100px;padding:12px;border:1px solid #bbc9bf;border-radius:9px;font:inherit;resize:vertical}.task time{font-size:13px;color:#62726d}#pipelineInfo{font-size:14px}details{margin-top:15px}summary{cursor:pointer}.steps{flex-wrap:wrap;gap:10px}
+</style></head><body><main>
+<header><div><h1>AI 打印机 · 电话生成物料</h1><div class="sub">说出需求，放下听筒，生成价格牌或海报并双面打印</div></div><span class="tag" id="printMode">A4 彩色双面 · 正反同图</span></header>
+<div id="connection" role="alert"></div>
+<section id="status" class="status" data-phase="loading" aria-live="polite"><i class="dot"></i><div><div class="title" id="phase">正在连接程序</div><div id="message">等待服务状态</div></div><div class="metrics"><span id="duration">0.0 秒</span><span id="packets">0 个音频包</span></div></section>
+<div class="steps"><span>① 拿起电话说需求</span><span>② 识别并保存记录</span><span>③ WorkBuddy 生成</span><span>④ 查看图片并双面打印</span></div>
+<section class="card"><div class="label">最近一次识别</div><div id="text" aria-live="polite">识别文字会显示在这里。</div><div class="row"><small id="resultMeta">等待第一通电话</small><button id="copy" disabled>复制文字</button></div></section>
+<section class="card"><div class="row"><strong>物料生成与打印</strong><small id="pipelineInfo">正在连接</small></div><div id="tasks"><p class="sub">电话识别完成后，任务会自动出现在这里。</p></div>
+<details><summary>补充、更正需求或输入文字测试</summary><p class="sub">请填写完整需求（店名、商品、价格、单位）。提交会新建独立任务；新任务生成完成后自动打印。</p><textarea id="manualText" placeholder="例如：老李鱼档，鲈鱼35元一斤，草鱼12元一斤，做一张价格牌。"></textarea><div class="task-actions"><button id="createTask">提交并生成</button><button id="useLast" class="secondary">填入最近识别文字</button><span id="actionInfo" role="status"></span></div></details></section>
+<section class="card"><div class="row"><strong>最近识别记录</strong><small>最近 20 条 · 完整记录保存在 data 文件夹</small></div><div id="history"><p class="sub">还没有识别记录。</p></div></section>
+<footer><div id="model">正在读取模型信息</div><div id="phone"></div><div>文字在挂机后生成并保存至本地运行记录。商品、价格与单位请核对实际口述内容。</div><div>打印铺满设备可打印区域。当前 Canon 四周仍有约5毫米硬件边缘；双面使用两面空白的 A4 纸，正反面为同一张图片。</div></footer>
+</main><script>
+const $=id=>document.getElementById(id);let latest='';let signature='';let taskSignature='';const token='__APP_TOKEN__';
+const taskNames={prepared:'等待提交',waiting_desktop:'等待 WorkBuddy 窗口',sending:'正在提交',submitted:'WorkBuddy 处理中',completed:'图片已就绪',needs_input:'需要补充信息',failed:'生成失败',timed_out:'等待结果超时',submission_unknown:'提交结果待核对'};
+const stageNames={understanding:'整理需求',generating_background:'生成底图',rendering:'模板排版',verifying:'检查图片',completed:'生成完成',needs_input:'需要补充信息',failed:'生成失败'};
+const printNames={not_printed:'尚未打印',submitting:'正在提交打印',spooled:'已提交打印',submission_unknown:'打印结果待核对',selection_needed:'请选择打印版本',failed:'打印需要处理'};
+async function action(url,body){const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json','X-App-Token':token},body:JSON.stringify(body)});const value=await r.json();if(!r.ok)throw Error(value.error||'操作失败');return value;}
+function element(tag,text,cls){const node=document.createElement(tag);if(text!=null)node.textContent=text;if(cls)node.className=cls;return node;}
+function renderTasks(p){
+ const pm=p.print_mode||{};$('printMode').textContent='A4 彩色'+(pm.duplex==='Simplex'?'单面':'双面 · 正反同图');
+ $('pipelineInfo').textContent=!p.enabled?'自动物料功能未开启':(p.worker_alive?'监听运行中':'监听未运行')+' · '+(p.auto_print?'自动打印开启':'自动打印关闭');
+ const next=JSON.stringify(p.tasks||[]);if(next===taskSignature)return;taskSignature=next;
+ const selected=new Set([...document.querySelectorAll('.print-check:checked')].map(x=>x.dataset.key));
+ $('tasks').replaceChildren();if(!(p.tasks||[]).length){$('tasks').append(element('p',p.message||'等待新通话','sub'));return;}
+ for(const t of p.tasks){const box=element('article',null,'task');box.dataset.id=t.id;const head=element('div',null,'task-head');head.append(element('strong',taskNames[t.state]||t.state,'badge'),element('time',new Date(t.created_at).toLocaleString('zh-CN')));box.append(head,element('p',t.text));
+ if(t.progress&&!['completed','needs_input','failed'].includes(t.state)){box.append(element('p',(stageNames[t.progress.stage]||'处理中')+' · '+(t.progress.message||''),'progress-note'));}else if(t.state==='submitted'){box.append(element('p','任务已提交，等待 WorkBuddy 返回实际阶段；尚无可验证百分比。','progress-note'));}
+ if(t.message)box.append(element('p',t.message,'sub'));if(t.validation_error)box.append(element('p','结果校验未通过：'+t.validation_error,'error'));
+ if(t.notification)box.append(element('p','电话提醒 · '+t.notification.message,'sub'));
+ if(t.questions.length){const list=element('ul');for(const q of t.questions)list.append(element('li',q));box.append(list);const edit=element('button','补充完整需求','secondary');edit.onclick=()=>{$('manualText').value=t.text;$('manualText').closest('details').open=true;$('manualText').focus();};box.append(edit);}
+ const gallery=element('div',null,'gallery');for(const f of t.files){const figure=element('figure');const link=element('a');link.href=f.url;link.target='_blank';link.rel='noopener';const img=element('img');img.src=f.url;img.alt=f.kind==='poster'?'海报预览':'价格牌预览';img.loading='lazy';link.append(img);const label=element('label');const check=element('input');check.type='checkbox';check.className='print-check';check.dataset.key=t.id+':'+f.path;check.value=f.path;check.checked=selected.has(check.dataset.key)||t.files.length===1;label.append(check,document.createTextNode(f.kind==='poster'?' 选择海报':' 选择价格牌'));figure.append(link,label);gallery.append(figure);}box.append(gallery);
+ const pr=t.printing||{state:'not_printed'};box.append(element('p',(printNames[pr.state]||pr.state)+(pr.message?' · '+pr.message:''),'sub'));
+ if(!t.automatic_print_eligible&&pr.state==='not_printed')box.append(element('small','历史任务：不会自动重印，可选择图片手动打印。'));
+ const actions=element('div',null,'task-actions');const feedback=element('small');
+ if(t.files.length&&!['spooled','submitting','submission_unknown'].includes(pr.state)){const print=element('button','打印所选图片');print.onclick=async()=>{print.disabled=true;try{await action('/api/jobs/'+t.id+'/print',{files:[...box.querySelectorAll('.print-check:checked')].map(x=>x.value)});feedback.textContent='已加入打印队列';}catch(e){feedback.textContent=e.message;print.disabled=false;}};actions.append(print);}
+ if(t.state==='waiting_desktop'){const retry=element('button','已处理窗口，重试提交','secondary');retry.onclick=async()=>{retry.disabled=true;try{await action('/api/jobs/'+t.id+'/retry',{});feedback.textContent='已请求重试';}catch(e){feedback.textContent=e.message;retry.disabled=false;}};actions.append(retry);}
+ actions.append(feedback);box.append(actions,element('small','任务 '+t.id));$('tasks').append(box);}
+}
+const names={loading:'正在准备',ready:'等待摘机',recording:'正在收音',transcribing:'正在识别',error:'需要处理'};
+function render(s){
+ renderTasks(s.pipeline||{});
+ $('status').dataset.phase=s.phase;$('phase').textContent=names[s.phase]||s.phase;$('message').textContent=s.message;
+ $('duration').textContent=Number(s.seconds||0).toFixed(1)+' 秒';$('packets').textContent=(s.packets||0)+' 个音频包';
+ $('phone').textContent='电话设备：'+s.phone_address+' · '+(s.bridge_alive?'监听程序正常':'监听程序尚未就绪');
+ const m=s.model||{};$('model').textContent=m.model?m.model+' · '+(m.gpu||m.device)+' · '+m.dtype:'正在加载本地语音模型';
+ const h=s.history||[];const next=JSON.stringify(h);if(next===signature)return;signature=next;
+ if(h.length){const r=h[0];latest=r.text||'';$('text').textContent=r.error?'本轮未完成：'+r.error:latest||'未识别到有效语音。';$('copy').disabled=!latest;
+ $('resultMeta').textContent=new Date(r.time).toLocaleString('zh-CN')+' · 录音 '+Number(r.seconds).toFixed(1)+' 秒'+(r.asr_seconds!=null?' · 识别 '+r.asr_seconds+' 秒':'');
+ $('history').replaceChildren();for(const item of h){const box=document.createElement('div');box.className='history-item';const meta=document.createElement('small');meta.textContent=new Date(item.time).toLocaleTimeString('zh-CN')+' · '+(item.model.model||'');const p=document.createElement('p');p.textContent=item.error||item.text||'未识别到有效语音';if(item.error)p.className='error';box.append(meta,p);$('history').append(box);}}
+}
+async function poll(){try{const r=await fetch('/api/state',{cache:'no-store'});if(!r.ok)throw Error(r.status);render(await r.json());$('connection').textContent='';}catch{$('connection').textContent='程序连接中断，请检查启动窗口。';}finally{setTimeout(poll,1000)}}
+$('copy').onclick=async()=>{try{await navigator.clipboard.writeText(latest);$('copy').textContent='已复制';setTimeout(()=>$('copy').textContent='复制文字',1500)}catch{$('copy').textContent='请选中文字复制'}};
+$('useLast').onclick=()=>{$('manualText').value=latest;};
+$('createTask').onclick=async()=>{$('createTask').disabled=true;try{await action('/api/tasks',{text:$('manualText').value});$('actionInfo').textContent='已创建任务，等待生成';$('manualText').value='';}catch(e){$('actionInfo').textContent=e.message;}finally{$('createTask').disabled=false;}};poll();
+</script></body></html>

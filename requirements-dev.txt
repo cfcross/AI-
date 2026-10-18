@@ -1,0 +1,2 @@
+-r requirements-workbuddy.txt
+numpy>=1.26,<3
