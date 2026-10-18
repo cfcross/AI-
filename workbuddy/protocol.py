@@ -6,6 +6,10 @@ import json
 from pathlib import Path
 from string import Template
 import uuid
+import sys
+if __package__ in (None, ''):
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from market_language import analyze
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -36,7 +40,7 @@ def generation_instruction(policy):
 
 
 def create_task(text, jobs_dir, *, source_id=None, store_name='', photos=(), skill_path='', python_path='',
-                generation_config=None):
+                generation_config=None, language_analysis=None):
     if not isinstance(text, str) or not text.strip():
         raise ValueError('识别文本为空，不能创建任务')
     if len(text) > 12000:
@@ -51,7 +55,12 @@ def create_task(text, jobs_dir, *, source_id=None, store_name='', photos=(), ski
         if not path.is_file() or path.suffix.lower() not in ('.png', '.jpg', '.jpeg', '.webp'):
             raise ValueError('照片必须为存在的 PNG/JPEG/WebP 文件')
         photo_paths.append(str(path))
-    supplied = {'transcript': text.strip(), 'store_name': store_name, 'photos': photo_paths}
+    options = (generation_config or {}).get('language_correction', {})
+    if language_analysis is None:
+        language_analysis = analyze(text.strip(), [store_name, *options.get('store_names', [])], options.get('enabled', True))
+    elif language_analysis.get('text', '').strip() != text.strip():
+        raise ValueError('纠偏记录与最终文字不一致')
+    supplied = {'transcript': language_analysis['text'].strip(), 'store_name': store_name, 'photos': photo_paths}
     fingerprint = hashlib.sha256(json.dumps(supplied, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
     request_file = directory / 'request.json'
     if directory.exists():
@@ -76,6 +85,9 @@ def create_task(text, jobs_dir, *, source_id=None, store_name='', photos=(), ski
     request['generation_policy'] = generation_policy(generation_config)
     request['render_script'] = str(Path(__file__).with_name('render_task.py').resolve())
     request['timing_schema_version'] = 1
+    request['language_analysis'] = language_analysis
+    request['raw_transcript'] = language_analysis['raw_text']
+    request['lexicon_reference'] = 'references/market-lexicon.json'
     template = Template((Path(__file__).parent / 'prompt.template.txt').read_text(encoding='utf-8'))
     prompt = template.substitute(task_json=json.dumps(request, ensure_ascii=False, indent=2),
                                  generation_instruction=generation_instruction(request['generation_policy']))

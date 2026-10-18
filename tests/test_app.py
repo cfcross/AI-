@@ -63,6 +63,16 @@ class AppTests(unittest.TestCase):
         self.assertEqual(self.app.snapshot()['phase'], 'ready')
         self.assertIn('GPU out of memory', self.app.snapshot()['history'][0]['error'])
 
+    def test_correction_is_saved_before_watcher_and_display_receive_text(self):
+        self.app.finish_record(self.event, text='东兴班每斤八十八元', raw_text='東興班每斤八十八元')
+        record = self.app.snapshot()['history'][0]
+        self.assertEqual(record['text'], '东星斑每斤八十八元')
+        self.assertEqual(record['asr_text'], '东兴班每斤八十八元')
+        self.assertEqual(record['raw_text'], '東興班每斤八十八元')
+        saved = json.loads((self.app.data / 'transcripts/example.json').read_text(encoding='utf-8'))
+        self.assertEqual(saved['correction']['edits'][0]['replacement'], '东星斑')
+        self.assertEqual((self.app.data / 'transcripts/example.txt').read_text(encoding='utf-8'), record['text'])
+
     def test_no_gpu_auto_uses_float32_cpu(self):
         self.assertEqual(choose_device(FakeTorch), ('cpu', 'single', 'float32'))
         with self.assertRaises(RuntimeError):

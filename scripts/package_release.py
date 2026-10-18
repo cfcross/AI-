@@ -7,7 +7,7 @@ from pathlib import Path
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
-TOP = {'app.py', 'asr_engine.py', 'config.example.json', 'setup.ps1', 'start.ps1',
+TOP = {'app.py', 'asr_engine.py', 'market_language.py', 'config.example.json', 'setup.ps1', 'start.ps1',
        'start.cmd', 'stop.cmd', 'start-workbuddy.cmd', 'stop-workbuddy.cmd',
        'send-latest-workbuddy.cmd', 'requirements-runtime.txt', 'requirements-workbuddy.txt',
        'requirements-dev.txt', 'README.md', 'CONTRIBUTING.md', 'THIRD_PARTY_NOTICES.md',

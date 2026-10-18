@@ -3,6 +3,7 @@ import importlib.metadata
 import time
 import wave
 from pathlib import Path
+from market_language import asr_context
 
 
 def choose_device(torch, requested='auto', precision='auto'):
@@ -24,7 +25,9 @@ class AsrEngine:
         import torch
         from qwen_asr import Qwen3ASRModel
         from opencc import OpenCC
-        self.np, self.torch, self.config = np, torch, config
+        self.np, self.torch, self.config = np, torch, dict(config)
+        if config.get('market_context', True):
+            self.config['context'] = asr_context(config.get('context', ''), config.get('store_names', []))
         self.device, dtype, precision = choose_device(torch, config['device'], config['dtype'])
         self.converter = OpenCC('t2s') if config['simplified'] else None
         model_path = (Path(root) / config['model_path']).resolve()
@@ -35,7 +38,8 @@ class AsrEngine:
             max_new_tokens=config['max_new_tokens'])
         self.info = {'model': model_path.name, 'device': self.device, 'dtype': precision,
                      'torch': torch.__version__, 'cuda_runtime': torch.version.cuda,
-                     'qwen_asr': importlib.metadata.version('qwen-asr')}
+                     'qwen_asr': importlib.metadata.version('qwen-asr'),
+                     'market_context': config.get('market_context', True)}
         if self.device.startswith('cuda'):
             props = torch.cuda.get_device_properties(self.device)
             self.info.update(gpu=props.name, vram_gb=round(props.total_memory / 2**30, 2))

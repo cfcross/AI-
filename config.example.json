@@ -14,10 +14,12 @@
                 "dtype":  "auto",
                 "language":  null,
                 "context":  "",
+                "market_context": true,
                 "max_new_tokens":  1024,
                 "silence_rms":  0.001,
                 "simplified":  true
             },
+    "language_correction": {"enabled": true, "store_names": []},
     "display":  {
                     "port":  8766,
                     "open_browser":  true,

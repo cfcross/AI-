@@ -55,3 +55,23 @@ test('new empty recording does not inherit old generation, ringing or printing',
   assert.doesNotMatch(elements.get('ring').textContent, /old ring/);
   assert.doesNotMatch(elements.get('step3').className, /done/);
 });
+
+test('showcase presents corrected text and keeps raw wording inspectable', () => {
+  const elements = new Map();
+  const element = () => ({textContent: '', children: [], append() {}, replaceChildren() {}});
+  const document = {getElementById(id) {
+    if (!elements.has(id)) elements.set(id, element());
+    return elements.get(id);
+  }, createElement: element};
+  const context = vm.createContext({document, snapshot: {
+    phase: 'ready', history: [{time: '2026-10-18', seconds: 3, text: '东星斑每斤88元',
+      correction: {raw_text: '东兴班每斤88元', edits: [{original: '东兴班', replacement: '东星斑'}], uncertain: []}}],
+    pipeline: {tasks: []},
+  }});
+  vm.runInContext(script, context);
+  vm.runInContext('render(snapshot)', context);
+  assert.equal(elements.get('transcript').textContent, '东星斑每斤88元');
+  assert.match(elements.get('correctionSummary').textContent, /东兴班 → 东星斑/);
+  assert.match(elements.get('correctionRaw').textContent, /东兴班每斤88元/);
+  assert.equal(elements.get('correctionDetails').hidden, false);
+});

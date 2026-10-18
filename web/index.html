@@ -9,7 +9,7 @@
 <div id="connection" role="alert"></div>
 <section id="status" class="status" data-phase="loading" aria-live="polite"><i class="dot"></i><div><div class="title" id="phase">正在连接程序</div><div id="message">等待服务状态</div></div><div class="metrics"><span id="duration">0.0 秒</span><span id="packets">0 个音频包</span></div></section>
 <div class="steps"><span>① 拿起电话说需求</span><span>② 识别并保存记录</span><span>③ WorkBuddy 生成</span><span>④ 查看图片并双面打印</span></div>
-<section class="card"><div class="label">最近一次识别</div><div id="text" aria-live="polite">识别文字会显示在这里。</div><div class="row"><small id="resultMeta">等待第一通电话</small><button id="copy" disabled>复制文字</button></div></section>
+<section class="card"><div class="label">最近一次识别</div><div id="text" aria-live="polite">识别文字会显示在这里。</div><div class="sub" id="correctionSummary"></div><details id="correctionDetails" hidden><summary>查看识别原文与词语核对</summary><div id="correctionRaw"></div></details><div class="row"><small id="resultMeta">等待第一通电话</small><button id="copy" disabled>复制文字</button></div></section>
 <section class="card"><div class="row"><strong>物料生成与打印</strong><small id="pipelineInfo">正在连接</small></div><div id="tasks"><p class="sub">电话识别完成后，任务会自动出现在这里。</p></div>
 <details><summary>补充、更正需求或输入文字测试</summary><p class="sub">请填写完整需求（店名、商品、价格、单位）。提交会新建独立任务；新任务生成完成后自动打印。</p><textarea id="manualText" placeholder="例如：老李鱼档，鲈鱼35元一斤，草鱼12元一斤，做一张价格牌。"></textarea><div class="task-actions"><button id="createTask">提交并生成</button><button id="useLast" class="secondary">填入最近识别文字</button><span id="actionInfo" role="status"></span></div></details></section>
 <section class="card"><div class="row"><strong>最近识别记录</strong><small>最近 20 条 · 完整记录保存在 data 文件夹</small></div><div id="history"><p class="sub">还没有识别记录。</p></div></section>
@@ -50,6 +50,7 @@ function render(s){
  const m=s.model||{};$('model').textContent=m.model?m.model+' · '+(m.gpu||m.device)+' · '+m.dtype:'正在加载本地语音模型';
  const h=s.history||[];const next=JSON.stringify(h);if(next===signature)return;signature=next;
  if(h.length){const r=h[0];latest=r.text||'';$('text').textContent=r.error?'本轮未完成：'+r.error:latest||'未识别到有效语音。';$('copy').disabled=!latest;
+ const c=r.correction,edits=c?.edits||[],uncertain=c?.uncertain||[];$('correctionSummary').textContent=edits.length?'已校正 '+edits.length+' 处：'+edits.map(e=>e.original+' → '+e.replacement).join('；'):'';$('correctionDetails').hidden=!c||(!edits.length&&!uncertain.length);$('correctionRaw').textContent=c?'识别原文：'+c.raw_text+(uncertain.length?'；已保留原词，待核对：'+uncertain.map(e=>e.original+'（可能为 '+e.replacement+'）').join('；'):''):'';
  $('resultMeta').textContent=new Date(r.time).toLocaleString('zh-CN')+' · 录音 '+Number(r.seconds).toFixed(1)+' 秒'+(r.asr_seconds!=null?' · 识别 '+r.asr_seconds+' 秒':'');
  $('history').replaceChildren();for(const item of h){const box=document.createElement('div');box.className='history-item';const meta=document.createElement('small');meta.textContent=new Date(item.time).toLocaleTimeString('zh-CN')+' · '+(item.model.model||'');const p=document.createElement('p');p.textContent=item.error||item.text||'未识别到有效语音';if(item.error)p.className='error';box.append(meta,p);$('history').append(box);}}
 }

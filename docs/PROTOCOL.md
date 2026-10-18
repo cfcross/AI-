@@ -22,3 +22,13 @@ WorkBuddy读取每轮prompt.txt，契约以workbuddy/prompt.template.txt、proto
 - result.json 可含 final_selection=true，表示 files 全为经过自动择优的最终交付图，而非候选/素材。只有当前配置和任务创建时配置都允许 auto_print_final_pages，才免人工选择打印多张同类成品；旧任务不会被追溯授权或重复打印。
 
 演示服务不导入生产硬件/AI模块，全部POST返回409。SVG仅为人工前端示例，生产回收仍校验PNG。
+
+## 语言预处理（2026-10-18）
+
+`market_language.py` 从版本化 skill 的 `references/market-lexicon.json` 读取词表。ASR 默认注入精简的正确商品/场所上下文，完整词表供后处理和 WorkBuddy 按类别查阅。当前不增加云端调用或文本大模型，不是通用拼音/粤拼纠错器。
+
+挂机后先保留 `raw_text`（ASR 原始输出）和 `asr_text`（简体化后的未纠偏文字），再保守纠偏，`text` 为最终展示/发送文字。transcripts JSON 通过临时文件原子提交，WorkBuddy 监听器不会读到半条记录。
+
+`correction` / 任务 `language_analysis` 包含 `version, raw_text, text, edits, uncertain, protected_names, terms, venues, method`。edits 偏移针对纠偏前文字，terms/venues/protected_names 偏移针对最终文字。`raw_transcript` 保留任务的纠偏前文字。terms 是最长词表匹配线索，不是订单：还要理解否定、范围、举例。
+
+同义场所只归类，原文字不替换。明确或登记店名受到保护；语境不足的候选不应用，正确菜品不强改。网页展示最终文字、修改提示和可展开原文；历史任务不重新纠偏、生成或打印。

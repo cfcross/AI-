@@ -108,7 +108,8 @@ def build_message(job, request):
     return (f"任务编号：{request['task_id']}\n"
             f"请先读取本机任务说明文件：{job / 'prompt.txt'}\n"
             f"项目执行授权：{generation_instruction(request.get('generation_policy', {}))}\n"
-            f"座机识别原文：{spoken}\n"
+            f"本轮最终文字（已做保守纠偏）：{spoken}\n"
+            "任务文件 language_analysis 包含原文、纠偏依据、商品候选、场所和受保护店名。先据此理解角色；商品主题不能当作店名。"
             "请使用已选中的 market-stall-demo 技能，判断用户要价格牌、海报还是两者；按任务文件的规则实际调用技能生成图片。"
             "直接用任务提供的 render_script，先1张高质量图，不做候选合集、不读引擎源码。"
             "店名缺失按技能代拟，没照片按授权自动生成底图；价格和单位不猜。"
@@ -192,7 +193,7 @@ def prepare_record(path, root, data, config=None):
     skill = Path.home() / '.workbuddy/skills/market-stall-demo'
     return create_task(record['text'], data / 'workbuddy/jobs', source_id=record['id'],
         skill_path=str(skill) if skill.is_dir() else '', python_path=sys.executable,
-        generation_config=config)
+        generation_config=config, language_analysis=record.get('correction'))
 
 
 def watch(root, data, profile, config=None):

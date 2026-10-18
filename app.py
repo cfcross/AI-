@@ -16,6 +16,7 @@ import threading
 import time
 import webbrowser
 from urllib.parse import urlsplit, parse_qs
+from market_language import analyze
 
 ROOT = Path(__file__).resolve().parent
 
@@ -103,7 +104,8 @@ class Application:
             node = shutil.which(str(self.root / node_setting) if '/' in node_setting or '\\' in node_setting else node_setting)
             if not node:
                 raise RuntimeError('未找到 Node.js。请安装 Node.js 20 或更新版本。')
-            self.engine = (self.engine_factory or AsrEngine)(self.config['asr'], self.root)
+            asr_options = {**self.config['asr'], 'store_names': self.config.get('language_correction', {}).get('store_names', [])}
+            self.engine = (self.engine_factory or AsrEngine)(asr_options, self.root)
             self.set_state(model=self.engine.info, message='模型已就绪，正在启动电话监听')
             if self.closed.is_set():
                 return
@@ -182,11 +184,19 @@ class Application:
 
     def finish_record(self, event, **result):
         record = {**event, **result, 'model': self.snapshot()['model'], 'text': result.get('text', '')}
+        if record['text'] and not result.get('error'):
+            options = self.config.get('language_correction', {})
+            record['asr_text'] = record['text']
+            record['correction'] = analyze(record['text'], options.get('store_names', []), options.get('enabled', True))
+            record['text'] = record['correction']['text']
         audio_path = Path(record['file'])
         record['file'] = str(audio_path.relative_to(self.data))
         target = self.data / 'transcripts'
         target.mkdir(exist_ok=True)
-        (target / (record['id'] + '.json')).write_text(json.dumps(record, ensure_ascii=False, indent=2), encoding='utf-8')
+        destination = target / (record['id'] + '.json')
+        pending = destination.with_suffix('.json.tmp')
+        pending.write_text(json.dumps(record, ensure_ascii=False, indent=2), encoding='utf-8')
+        pending.replace(destination)  # Watcher can only see a complete corrected record.
         (target / (record['id'] + '.txt')).write_text(record['text'], encoding='utf-8')
         if not self.config['storage']['keep_audio']:
             audio_path.unlink(missing_ok=True)

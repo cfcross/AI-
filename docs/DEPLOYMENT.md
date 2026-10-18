@@ -39,6 +39,10 @@
 
 ## 启动与验收
 
+词表版升级需同步 `market_language.py`、`app.py`、`asr_engine.py`、`workbuddy`、`web` 和完整 `skills/market-stall-demo`，再安装 skill 并重启程序。无新依赖。默认 `asr.market_context=true` 注入精简行业词；`language_correction.enabled=true` 开启保守纠偏。真实店名调研后填在**本机** `config.json` 的 `language_correction.store_names` 数组，会用于保护名字和提供 ASR 上下文；不要把真实店名列表混入公开示例配置。
+
+共享词表为 `skills/market-stall-demo/references/market-lexicon.json`：22类来自现场布局图，商品为常见词扩充，不是实地库存。新增相似词先添加语境正反例测试；不要把所有商品同音词无条件替换。`鱼汤`、真实店名等歧义词可能保留，网页提供原文和候选查看。
+
 ```powershell
 .\.venv\Scripts\python.exe scripts/doctor.py
 .\start.cmd
