@@ -53,6 +53,12 @@ WorkBuddy V5.8.3 的生图工具还有独立积分弹窗，不能只靠 prompt �
 
 ## 发布、升级、回退
 
+### 打印调用超时
+
+若图片成功但打印超时，先检查纸张、连接及 Windows 队列。`data/workbuddy/jobs/<任务>/print.json` 保存错误详情，`print-receipts/*.json` 保存打印阶段；`preparing/checking_printer` 表示尚在读取驱动，`submitting` 表示可能已提交。列表显示“正常”不代表驱动查询一定能返回。
+
+已确认队列为空、驱动查询仍卡住时，可由现场人员在管理员终端运行 `Restart-Service Spooler`，随后验证新任务打印。提交不明的历史任务不会自动重印，须核对回执与实际出纸后再恢复；不要批量删除失败记录或回执。
+
 `python scripts/package_release.py`生成含skill的干净源码包；`--include-model`校验并加入模型。均排除本机配置、数据、凭据、虚拟环境、驱动和node.exe。大模型包用团队存储或移动硬盘，不放普通Git提交。包仍需安装环境。
 
 升级前停止服务、备份config/data，取指定版本，更新依赖并同步安装skill。回退代码也要回退skill；保留打印回执避免重复输出。当前开发机现场目录与Git开发目录分开维护，后续改动先在Git目录验证再部署。

@@ -5,6 +5,7 @@ import unittest
 from unittest.mock import patch
 from PIL import Image
 import sys
+import subprocess
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from workbuddy.pipeline import Pipeline
 from workbuddy.protocol import create_task
@@ -173,6 +174,32 @@ class PipelineTests(unittest.TestCase):
             arguments = runner.call_args.args[0]
             self.assertEqual(arguments[arguments.index('-DuplexMode')+1], 'LongEdge')
             self.assertEqual(arguments[arguments.index('-Layout')+1], 'Cover')
+
+    def test_driver_preparation_timeout_is_named_and_never_blindly_reprinted(self):
+        job = self.make_job()
+        self.pipeline.printer_runner = self.pipeline.run_printer
+        def stuck(command, **kwargs):
+            receipt = Path(command[command.index('-ReceiptPath') + 1])
+            save(receipt, {'status': 'preparing', 'stage': 'checking_printer'})
+            raise subprocess.TimeoutExpired(command, 90)
+        with patch('workbuddy.pipeline.shutil.which', return_value='powershell.exe'), \
+             patch('workbuddy.pipeline.subprocess.run', side_effect=stuck) as runner:
+            self.pipeline.scan()
+            self.pipeline.scan()
+            self.assertEqual(runner.call_count, 1)
+        ledger = read(job / 'print.json')
+        self.assertIn('驱动准备超时', ledger['message'])
+        self.assertNotIn('Command ', ledger['message'])
+        self.assertIn('checking_printer', ledger['error_detail'])
+
+    def test_snapshot_reads_live_print_status_while_scan_is_blocked(self):
+        job = self.make_job()
+        def printing(*args):
+            self.assertEqual(self.pipeline.snapshot()['tasks'][0]['printing']['state'], 'submitting')
+            self.fake_print(*args)
+        self.pipeline.printer_runner = printing
+        self.pipeline.scan()
+        self.assertEqual(self.pipeline.snapshot()['tasks'][0]['printing']['state'], 'spooled')
 
     def enable_ringing(self, handler):
         self.config['notifications'] = {'enabled': True}

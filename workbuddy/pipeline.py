@@ -21,6 +21,12 @@ def utcnow():
     return datetime.now(timezone.utc).isoformat()
 
 
+class PrintDispatchError(RuntimeError):
+    def __init__(self, message, detail):
+        super().__init__(detail)
+        self.user_message = message
+
+
 class Pipeline:
     def __init__(self, root, config, config_path, printer_runner=None, ring_handler=None):
         self.root, self.config, self.config_path = Path(root), config, Path(config_path)
@@ -54,7 +60,15 @@ class Pipeline:
 
     def snapshot(self):
         with self.lock:
-            return json.loads(json.dumps(self.status))
+            value = json.loads(json.dumps(self.status))
+        # scan may be blocked in a driver call. Read its durable ledger so the
+        # page still shows "submitting" instead of the previous "not_printed".
+        for task in value.get('tasks', []):
+            try:
+                task['printing'] = self.load_print(self.jobs / task['id'])
+            except (OSError, ValueError):
+                pass
+        return value
 
     def notification_event(self, event):
         job = self.job_path(event['task_id'])
@@ -208,7 +222,11 @@ class Pipeline:
     def load_print(self, job):
         path = job / 'print.json'
         if path.exists():
-            return read(path)
+            value = read(path)
+            # Older versions placed the full subprocess command in the UI.
+            if value.get('state') == 'submission_unknown' and 'Command ' in value.get('message', ''):
+                value['message'] = '打印调用超时，结果待核对。请检查打印机与 Windows 打印后台服务；本任务未自动重印。'
+            return value
         # Respect print receipts from the earlier manual test tools.
         for old in job.glob('print-manual*.json'):
             value = read(old)
@@ -271,7 +289,9 @@ class Pipeline:
             ledger.update(state='spooled', message=f'已提交打印（A4 彩色、{sides}、{fit}）；硬件边缘无法印刷，实际出纸请查看打印机')
         except Exception as error:
             # Once dispatch begins, never automatically retry even if the process died.
-            ledger.update(state='submission_unknown', message='打印未确认，请核对队列：' + str(error))
+            ledger.update(state='submission_unknown', message=getattr(error, 'user_message',
+                '打印未确认，请核对打印机与队列；详细原因已保存到本地打印记录。'),
+                error_detail=str(error))
         ledger['updated_at'] = utcnow()
         save(job / 'print.json', ledger)
         return ledger
@@ -280,7 +300,7 @@ class Pipeline:
         shell = shutil.which('powershell.exe')
         if not shell:
             raise RuntimeError('未找到 Windows PowerShell')
-        done = subprocess.run([shell, '-NoProfile', '-NonInteractive', '-File',
+        command = [shell, '-NoProfile', '-NonInteractive', '-File',
             str(self.root / 'scripts/print-image.ps1'), '-ImagePath', str(image),
             '-PrinterName', printer, '-ReceiptPath', str(receipt), '-DocumentName', name,
             '-DuplexMode', self.print_options.get('duplex', 'LongEdge'),
@@ -288,8 +308,19 @@ class Pipeline:
             '-OffsetXmm', str(self.print_options.get('offset_x_mm', 0)),
             '-OffsetYmm', str(self.print_options.get('offset_y_mm', 0)),
             '-BackOffsetXmm', str(self.print_options.get('back_offset_x_mm', 0)),
-            '-BackOffsetYmm', str(self.print_options.get('back_offset_y_mm', 0))],
-            capture_output=True, timeout=90, creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0)
+            '-BackOffsetYmm', str(self.print_options.get('back_offset_y_mm', 0))]
+        try:
+            done = subprocess.run(command, stdin=subprocess.DEVNULL,
+                capture_output=True, timeout=90, creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0)
+        except subprocess.TimeoutExpired as error:
+            try:
+                status = read(receipt)
+            except (OSError, ValueError):
+                status = {}
+            preparing = status.get('status') == 'preparing'
+            message = ('打印驱动准备超时，尚未调用打印。请检查打印机，必要时由管理员重启 Windows 打印后台服务。'
+                       if preparing else '打印调用超时，提交结果待核对；本任务未自动重印。')
+            raise PrintDispatchError(message, f'90s timeout; stage={status.get("stage", "unknown")}; {error}') from error
         if done.returncode:
             raise RuntimeError(done.stderr.decode('utf-8', errors='replace')[-500:])
 
@@ -301,6 +332,7 @@ class Pipeline:
             try:
                 request, state = read(path), read(job / 'state.json')
                 task = {'id': job.name, 'created_at': request['created_at'], 'text': request['transcript'],
+                        'source_id': request.get('source_id'),
                         'state': state['state'], 'message': state.get('message', ''), 'files': [], 'questions': [],
                         'automatic_print_eligible': request['created_at'] >= self.activated}
                 try:

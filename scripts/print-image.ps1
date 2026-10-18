@@ -47,10 +47,16 @@ function Save-Receipt {
     [IO.File]::WriteAllText($receiptFull, $json, (New-Object Text.UTF8Encoding($false)))
 }
 try {
+    # Persist the current stage before any driver call: IsValid itself can hang.
+    $receipt['stage'] = 'loading_image'
+    Save-Receipt
     if (-not $Calibration) { $image = [Drawing.Image]::FromFile($imageFull) }
+    $receipt['stage'] = 'creating_document'; Save-Receipt
     $document = New-Object Drawing.Printing.PrintDocument
     $document.PrinterSettings.PrinterName = $PrinterName
+    $receipt['stage'] = 'checking_printer'; Save-Receipt
     if (-not $document.PrinterSettings.IsValid) { throw 'Printer is not available' }
+    $receipt['stage'] = 'checking_capabilities'; Save-Receipt
     if (-not $document.PrinterSettings.SupportsColor) { throw 'Printer does not support color' }
     if ($DuplexMode -ne 'Simplex' -and -not $document.PrinterSettings.CanDuplex) {
         throw 'Printer does not support automatic duplex; no pages were submitted'
@@ -70,6 +76,7 @@ try {
     $document.OriginAtMargins = $false
     $document.DocumentName = $DocumentName
     $document.PrintController = New-Object Drawing.Printing.StandardPrintController
+    $receipt['stage'] = 'reading_page_geometry'; Save-Receipt
     $area = $document.DefaultPageSettings.PrintableArea
     $receipt['printable_area_mm'] = @{
         x = [Math]::Round($area.X * .254, 2); y = [Math]::Round($area.Y * .254, 2)
@@ -176,15 +183,18 @@ try {
     }.GetNewClosure())
     if ($MeasureOnly) {
         $receipt.status = 'measured_only'
+        Save-Receipt
         $receipt | ConvertTo-Json -Depth 4
         return
     }
     # Record intent BEFORE Print; a crash must not trigger blind reprinting.
     $receipt.status = 'submitting'
+    $receipt['stage'] = 'printing'
     Save-Receipt
     $document.Print()
     $receipt['rendered_pages'] = $pageCounter.value
     $receipt.status = 'spooled'
+    $receipt['stage'] = 'completed'
     $receipt['message'] = 'Windows accepted the print call; physical output must be confirmed separately.'
     Save-Receipt
     $receipt | ConvertTo-Json -Depth 4
