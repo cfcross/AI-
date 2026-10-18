@@ -33,6 +33,10 @@
     "automation":  {
                        "enabled":  false
                    },
+    "generation": {
+        "credit_authorized": false,
+        "auto_print_final_pages": false
+    },
     "notifications":  {
                           "enabled":  false,
                           "ring_seconds":  8

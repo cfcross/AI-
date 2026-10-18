@@ -92,6 +92,29 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(len(self.calls), 1)
         self.assertTrue(self.calls[0].endswith('1.png'))
 
+    def test_web_task_carries_credit_policy(self):
+        self.config['generation'] = {'credit_authorized': True, 'auto_print_final_pages': True}
+        task_id = self.pipeline.create('测试鱼档海报')
+        policy = read(self.pipeline.jobs / task_id / 'request.json')['generation_policy']
+        self.assertTrue(policy['credit_authorized'])
+        self.assertTrue(policy['auto_print_final_pages'])
+
+    def test_final_pages_print_without_selection_only_with_both_config_and_task_policy(self):
+        job = self.make_job(count=2)
+        request = read(job / 'request.json')
+        request['generation_policy']['auto_print_final_pages'] = True
+        save(job / 'request.json', request)
+        result = read(job / 'result.json')
+        result['final_selection'] = True
+        self.assertEqual(self.pipeline.print_task(job, result)['state'], 'selection_needed')
+        self.config['generation'] = {'auto_print_final_pages': True}
+        result['final_selection'] = False
+        self.assertEqual(self.pipeline.print_task(job, result)['state'], 'selection_needed')
+        result['final_selection'] = True
+        self.assertEqual(self.pipeline.print_task(job, result)['state'], 'spooled')
+        self.pipeline.print_task(job, result)
+        self.assertEqual(len(self.calls), 2)
+
     def test_manual_legacy_receipt_prevents_reprint(self):
         job = self.make_job()
         save(job / 'print-manual-a4-color-1.json', {'status': 'spooled'})

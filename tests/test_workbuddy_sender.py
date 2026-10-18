@@ -155,6 +155,22 @@ class WatchTests(unittest.TestCase):
                 sender.assert_not_called()
             self.assertEqual(read(self.data / 'workbuddy/watch-status.json')['phase'], 'needs_attention')
 
+    def test_confirmed_timeout_does_not_resend_or_block_next_task(self):
+        state = read(self.job / 'state.json')
+        state.update(state='timed_out', submitted=True)
+        save(self.job / 'state.json', state)
+        next_job = create_task('新任务海报', self.data / 'workbuddy/jobs')
+        def finish(job, profile):
+            state = read(job / 'state.json')
+            state.update(state='needs_input')
+            save(job / 'state.json', state)
+            return state
+        with patch('workbuddy.run.send_job', side_effect=finish) as sender, patch('workbuddy.run.time.sleep'):
+            with self.assertRaises(KeyboardInterrupt):
+                watch_loop(self.data, self.data, {}, self.stop_after_three)
+        sender.assert_called_once_with(next_job, {})
+        self.assertEqual(read(self.job / 'state.json')['state'], 'timed_out')
+
 
 if __name__ == '__main__':
     unittest.main()

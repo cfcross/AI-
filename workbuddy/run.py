@@ -11,7 +11,7 @@ import uuid
 
 if __package__ in (None, ''):
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from workbuddy.protocol import create_task, validate_result
+from workbuddy.protocol import create_task, validate_result, generation_instruction
 from workbuddy.desktop import WorkBuddyDesktop, DesktopBlocked
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -105,10 +105,43 @@ def build_message(job, request):
     spoken = json.dumps(transcript, ensure_ascii=False) if len(transcript) <= 500 else '完整原文位于上述任务文件，较长未在此重复'
     return (f"任务编号：{request['task_id']}\n"
             f"请先读取本机任务说明文件：{job / 'prompt.txt'}\n"
+            f"项目执行授权：{generation_instruction(request.get('generation_policy', {}))}\n"
             f"座机识别原文：{spoken}\n"
             "请使用已选中的 market-stall-demo 技能，判断用户要价格牌、海报还是两者；按任务文件的规则实际调用技能生成图片。"
-            "店名缺失按技能代拟，没照片可生成一张底图；价格和单位不猜。"
+            "店名缺失按技能代拟，没照片按授权自动生成底图；价格和单位不猜。"
+            "不要用 AskQuestion 等待确认；缺硬信息写 needs_input，工具无法恢复写 failed 后结束。"
             "按任务文件写 progress.json 更新阶段，完成后写 result.json。图片由本地网页展示和打印，请勿自动打开图片预览、切换浏览器或自行打印。")
+
+
+class CreditGuard:
+    """Approve the exact image-credit modal only for configured, submitted tasks."""
+    def __init__(self, profile, config=None, adapter=None):
+        self.profile, self.config, self.adapter = profile, config or {}, adapter
+        self.next_check = 0
+
+    def tick(self, job):
+        if self.config.get('generation', {}).get('credit_authorized') is not True:
+            return
+        if time.monotonic() < self.next_check:
+            return
+        self.next_check = time.monotonic() + 2
+        try:
+            request = read(job / 'request.json')
+            state = read(job / 'state.json')
+            if request.get('generation_policy', {}).get('credit_authorized') is not True or not state.get('submitted'):
+                return
+            self.adapter = self.adapter or WorkBuddyDesktop(self.profile)
+            if self.adapter.confirm_generation_credit(request['task_id']):
+                path = job / 'credit-confirmations.json'
+                previous = read(path) if path.exists() else {}
+                save(path, {'task_id': request['task_id'], 'count': previous.get('count', 0) + 1,
+                            'last_confirmed_at': datetime.now(timezone.utc).isoformat(),
+                            'action': 'image_generation_credit_confirm',
+                            'message': '按项目授权自动点击本次生图积分确认'})
+                print('已按项目授权确认本次生图积分：' + request['task_id'], flush=True)
+        except Exception as error:
+            self.next_check = time.monotonic() + 10
+            print('生图积分弹窗检查暂未成功：' + str(error), flush=True)
 
 
 class DisplayGuard:
@@ -149,16 +182,17 @@ def monitor(job, timeout, check_stop=lambda: None):
     return transition(job, 'timed_out', message='尚未获得有效 result.json；WorkBuddy 可能仍在运行，不自动重发。' + last_error)
 
 
-def prepare_record(path, root, data):
+def prepare_record(path, root, data, config=None):
     record = read(path)
     if record.get('error') or record.get('reason') != 'hangup' or not record.get('text', '').strip():
         return None
     skill = Path.home() / '.workbuddy/skills/market-stall-demo'
     return create_task(record['text'], data / 'workbuddy/jobs', source_id=record['id'],
-        skill_path=str(skill) if skill.is_dir() else '', python_path=sys.executable)
+        skill_path=str(skill) if skill.is_dir() else '', python_path=sys.executable,
+        generation_config=config)
 
 
-def watch(root, data, profile):
+def watch(root, data, profile, config=None):
     identity = str(uuid.uuid4())
     control = data / 'workbuddy/watcher.json'
     stop_file = data / 'workbuddy/stop.json'
@@ -173,12 +207,13 @@ def watch(root, data, profile):
                 pass
         display_guard.tick()
     try:
-        watch_loop(root, data, profile, check_stop)
+        watch_loop(root, data, profile, check_stop, config)
     finally:
         control.unlink(missing_ok=True)
 
 
-def watch_loop(root, data, profile, check_stop):
+def watch_loop(root, data, profile, check_stop, config=None):
+    credit_guard = CreditGuard(profile, config)
     cursor_path = data / 'workbuddy/watch.json'
     transcript_dir = data / 'transcripts'
     if cursor_path.exists():
@@ -203,7 +238,10 @@ def watch_loop(root, data, profile, check_stop):
                 try:
                     result = validate_result(path.parent)
                 except (OSError, ValueError):
-                    blocked.append(path.parent)
+                    # A confirmed but slow generation is isolated to its own conversation.
+                    # Keep collecting late results; never resubmit it or block newer calls.
+                    if state['state'] == 'submission_unknown' or not state.get('submitted'):
+                        blocked.append(path.parent)
                 else:
                     transition(path.parent, result['status'], submitted=True, result=result,
                                message=result.get('message', '迟到结果已校验'))
@@ -219,7 +257,7 @@ def watch_loop(root, data, profile, check_stop):
             if len(pending) >= 20:
                 break  # Leave unprocessed transcript on disk for the next queue pass.
             try:
-                job = prepare_record(path, root, data)
+                job = prepare_record(path, root, data, config)
             except (json.JSONDecodeError, PermissionError):
                 continue  # ASR may still be finishing its write.
             if job and job not in pending:
@@ -248,7 +286,10 @@ def watch_loop(root, data, profile, check_stop):
             if state['state'] != 'submitted':
                 next_attempt[job] = time.monotonic() + profile.get('desktop_retry_seconds', 15)
                 continue
-            monitor(job, profile.get('generation_timeout_seconds', 600), check_stop)
+            def check_job():
+                check_stop()
+                credit_guard.tick(job)
+            monitor(job, profile.get('generation_timeout_seconds', 600), check_job)
         else:
             time.sleep(1)
 
@@ -275,6 +316,7 @@ def main():
     data = (root / config['storage']['directory']).resolve()
     profile = read(args.profile)
     profile['display_url'] = f"http://127.0.0.1:{config['display']['port']}/showcase"
+    credit_guard = CreditGuard(profile, config)
     if args.command == 'stop':
         control = data / 'workbuddy/watcher.json'
         if not control.exists():
@@ -290,23 +332,23 @@ def main():
                     WorkBuddyDesktop(profile).show_display(profile['display_url'])
                 except Exception as error:
                     print('启动展示页失败，可在 WorkBuddy 内打开 ' + profile['display_url'] + '：' + str(error), flush=True)
-            watch(root, data, profile)
+            watch(root, data, profile, config)
             return
         if args.command == 'latest':
             records = sorted((data / 'transcripts').glob('*.json'), key=lambda p: p.stat().st_mtime, reverse=True)
             if not records:
                 raise RuntimeError('没有识别记录')
-            job = prepare_record(records[0], root, data)
+            job = prepare_record(records[0], root, data, config)
             if job is None:
                 raise RuntimeError('最新记录为空、异常挂断或识别失败，未发送')
         else:
             job = args.job.resolve()
         if args.command == 'result':
-            state = monitor(job, args.wait)
+            state = monitor(job, args.wait, lambda: credit_guard.tick(job))
         else:
             state = send_job(job, profile, resume_skill=getattr(args, 'resume_skill', False))
             if state['state'] == 'submitted' and args.wait:
-                state = monitor(job, args.wait)
+                state = monitor(job, args.wait, lambda: credit_guard.tick(job))
         if state['state'] in ('waiting_desktop', 'submission_unknown', 'timed_out', 'failed'):
             raise SystemExit(2)
 

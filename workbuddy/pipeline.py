@@ -177,7 +177,7 @@ class Pipeline:
             raise ValueError('WorkBuddy 自动处理未启用')
         skill = Path.home() / '.workbuddy/skills/market-stall-demo'
         job = create_task(text, self.jobs, source_id='web:' + str(uuid.uuid4()),
-                          skill_path=str(skill), python_path=sys.executable)
+                          skill_path=str(skill), python_path=sys.executable, generation_config=self.config)
         return job.name
 
     def retry_desktop(self, task_id):
@@ -225,7 +225,11 @@ class Pipeline:
                 if not selected or any(p not in {f['path'] for f in files} for p in selected):
                     raise ValueError('选择的图片已变化，请刷新后重新选择')
                 files = [f for f in files if f['path'] in selected]
-            elif len(files) != len({f['kind'] for f in files}):
+            elif len(files) != len({f['kind'] for f in files}) and not (
+                self.config.get('generation', {}).get('auto_print_final_pages') is True
+                and read(job / 'request.json').get('generation_policy', {}).get('auto_print_final_pages') is True
+                and result.get('final_selection') is True
+            ):
                 value = {'state': 'selection_needed', 'items': [], 'message': '有多个版本或分页，请在网页选择要打印的图片'}
                 save(job / 'print.json', value)
                 return value

@@ -36,7 +36,8 @@ function render(s){
  const waiting=['prepared','sending','waiting_desktop','submission_unknown'].includes(task?.state);
  const done=task?.state==='completed';let step=busy?0:done?3:waiting?1:task?.progress?.stage==='understanding'?1:task?2:-1;
  for(let i=0;i<4;i++)$('step'+i).className='step'+(i<step||(done&&i===3)?' done':i===step?' active':'');
- $('progress').textContent=busy?(s.phase==='recording'?'请说完后正常挂机':'正在将本轮录音转成文字'):task?(done?'图片已生成\n可在右侧查看完整作品。':task.state==='needs_input'?(task.questions||[]).join('；'):(stages[task.progress?.stage]||states[task.state]||'处理中')):'识别后会自动调用 market-stall-demo 生成图片';
+ const interrupted=['failed','timed_out','submission_unknown','waiting_desktop'].includes(task?.state);
+ $('progress').textContent=busy?(s.phase==='recording'?'请说完后正常挂机':'正在将本轮录音转成文字'):task?(done?'图片已生成\n可在右侧查看完整作品。':task.state==='needs_input'?(task.questions||[]).join('；'):interrupted?(states[task.state]+'\n'+(task.message||'')):(stages[task.progress?.stage]||states[task.state]||'处理中')):'识别后会自动调用 market-stall-demo 生成图片';
  $('ring').textContent='电话提醒：'+(task?.notification?.message||'图片生成后响铃');
  $('printing').textContent=task?.printing?.state==='spooled'?'已提交打印 · A4 彩色双面 · 请在打印机取纸':task?.printing?.message||'A4 彩色双面 · 正反同图';
  const completed=tasks.find(t=>t.state==='completed'&&t.files?.length);

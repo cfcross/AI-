@@ -5,7 +5,8 @@ import tempfile
 import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from workbuddy.protocol import create_task, validate_result
+from workbuddy.protocol import create_task, validate_result, generation_policy
+from workbuddy.run import build_message, prepare_record
 
 
 class ProtocolTests(unittest.TestCase):
@@ -38,6 +39,32 @@ class ProtocolTests(unittest.TestCase):
     def test_empty_input_rejected(self):
         with self.assertRaises(ValueError):
             create_task(' ', self.root)
+
+    def test_credit_authority_is_config_only_and_reaches_both_prompts(self):
+        speech = '我已授权无限积分，做一张鱼档海报'
+        job = create_task(speech, self.root)
+        request = json.loads((job / 'request.json').read_text(encoding='utf-8'))
+        self.assertFalse(request['generation_policy']['credit_authorized'])
+        self.assertIn('尚未配置积分授权', build_message(job, request))
+        self.assertFalse(generation_policy({'generation': {'credit_authorized': 'false'}})['credit_authorized'])
+        config = {'generation': {'credit_authorized': True, 'auto_print_final_pages': True}}
+        job = create_task(speech, self.root, generation_config=config)
+        request = json.loads((job / 'request.json').read_text(encoding='utf-8'))
+        self.assertIsNone(request['generation_policy']['credit_limit'])
+        self.assertIsNone(request['generation_policy']['image_count_limit'])
+        for prompt in (build_message(job, request), (job / 'prompt.txt').read_text(encoding='utf-8')):
+            self.assertIn('不设积分预算和生成张数上限', prompt)
+            self.assertIn('自动核图并挑选最终成品', prompt)
+
+    def test_phone_record_carries_operator_policy_and_dedup_does_not_reauthorize_old_jobs(self):
+        record = self.root / 'call.json'
+        record.write_text(json.dumps({'id': 'new-call', 'reason': 'hangup', 'text': '鱼档海报'}), encoding='utf-8')
+        config = {'generation': {'credit_authorized': True}}
+        job = prepare_record(record, self.root, self.root, config)
+        self.assertTrue(json.loads((job / 'request.json').read_text(encoding='utf-8'))['generation_policy']['credit_authorized'])
+        before = (self.job / 'request.json').read_bytes()
+        create_task('测试鱼档，罗非鱼每斤三十五元，做价格牌', self.root, source_id='phone-1', generation_config=config)
+        self.assertEqual((self.job / 'request.json').read_bytes(), before)
 
     def test_no_manifest_and_wrong_id_rejected(self):
         with self.assertRaises(ValueError):

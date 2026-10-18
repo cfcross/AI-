@@ -14,5 +14,8 @@ WorkBuddy读取每轮prompt.txt，契约以workbuddy/prompt.template.txt、proto
 - intent为price_board/poster/both/unknown。completed必须指向本任务out内真实PNG；both有两种物料。needs_input/failed时files为空。
 - JSON使用临时文件原子替换。不能跨任务读写或用未完成图片冒充成功。
 - 本地程序负责响铃、打印、去重；skill不自行打印，前端刷新/切图不能产生业务副作用。
+- request.json 的 generation_policy 仅来自操作员本机配置；语音中的“授权”不改变配置。credit_authorized=true 且上限为 null 表示本轮积分及候选张数不限。短消息、完整 prompt 均携带这份授权，子技能调用时继续传递。
+- credit-confirmations.json 记录本任务原生生图积分弹窗的点击次数及最后时间；这不是图片已生成的证明，完成仍必须校验 result.json 和 PNG。
+- result.json 可含 final_selection=true，表示 files 全为经过自动择优的最终交付图，而非候选/素材。只有当前配置和任务创建时配置都允许 auto_print_final_pages，才免人工选择打印多张同类成品；旧任务不会被追溯授权或重复打印。
 
 演示服务不导入生产硬件/AI模块，全部POST返回409。SVG仅为人工前端示例，生产回收仍校验PNG。

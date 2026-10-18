@@ -95,6 +95,35 @@ class WorkBuddyDesktop:
             records.append(record)
         return {'window': self.window.window_text(), 'process': str(self.exe), 'controls': records}
 
+    def generation_credit_button(self, task_id):
+        """Match ONLY the observed image-credit modal inside this task's WorkBuddy."""
+        controls = self.controls()
+        dialogs = [c for c in controls if c.is_visible()
+                   and c.element_info.control_type == 'Custom'
+                   and c.element_info.name == '确认开始生成图片？']
+        if len(dialogs) != 1 or not self.message_visible(task_id):
+            return None
+        children = [c for c in dialogs[0].descendants() if c.is_visible()]
+        texts = {c.element_info.name for c in children if c.element_info.control_type == 'Text'}
+        if '产生积分消耗' not in texts or not any(
+            text.startswith('当前模型生成图片将消耗额外积分') for text in texts
+        ):
+            return None
+        buttons = [c for c in children if c.element_info.control_type == 'Button'
+                   and c.element_info.name == '1 确认' and c.is_enabled()]
+        return buttons[0] if len(buttons) == 1 else None
+
+    def confirm_generation_credit(self, task_id):
+        if self.generation_credit_button(task_id) is None:
+            return False
+        # UIA reports the chat controls visible even underneath the fullscreen
+        # showcase. Invoke the exact button; a coordinate click hits the web page.
+        button = self.generation_credit_button(task_id)
+        if button is None:
+            return False
+        button.invoke()
+        return True
+
     def find(self, selector):
         deadline = time.monotonic() + 3
         while True:

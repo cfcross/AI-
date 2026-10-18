@@ -32,6 +32,8 @@
 - `runtime.node`默认PATH中的node，也支持相对路径。
 - `printing.printer_name`填本机实际队列名；先测试，再设`printing.enabled=true`。A4彩色、长边双面、Cover；双面使用两面空白纸。
 - 登录WorkBuddy、安装skill并验证当前客户端控件后，设`automation.enabled=true`。
+- 项目负责人授权积分生图后，在本机 `config.json` 设置 `generation.credit_authorized=true`。该授权不设积分或候选图张数上限，优先质量，自动择优；会传给每轮任务及下游生图技能。公开示例默认关闭，不把某项目的费用授权默认赋予所有部署者。
+- 完全自动交付可设 `generation.auto_print_final_pages=true`：只自动打印模型已筛选并标记 `final_selection=true` 的最终成品/分页，不打印底图或候选。迁移机器需复制这两个本机设置，并重新安装新版 skill、重启程序。
 - 完成响铃`notifications.enabled=true`；现场双栏`display.workbuddy_showcase=true`、`display.open_browser=false`。
 - 桌面profile示例为V5.8.3已验证控件，使用当前用户LOCALAPPDATA；客户端版本不同需复核。
 
@@ -43,6 +45,10 @@
 ```
 
 逐项检查：摘机提示音 → 挂机识别并保存 → skill选择/生图 → 网页进度/图像 → 响铃 → 双面出纸 → 下一轮电话。拿已知原文核对数字/单位。新机打印边距要重新测量。
+
+模型选择取决于当前 WorkBuddy 内置生图工具实际开放的选项；程序要求优先适合任务的最佳质量档位，在结果 summary 中记录实际模型和质量检查。无法选择模型时不声称已选定某个模型。
+WorkBuddy V5.8.3 的生图工具还有独立积分弹窗，不能只靠 prompt 关闭。授权开启后，监听器每 2 秒检查当前任务的“确认开始生成图片？”弹窗，同时核对“产生积分消耗”和说明文字，再点击该弹窗内的“1 确认”。确认记录写入任务的 credit-confirmations.json。只处理当前已确认发送且携带积分授权的任务，不点击其他权限/充值/购买弹窗，也不更改客户端全局权限。客户端控件变化时需更新匹配器并重新验收。
+缺商品/价格/单位写 needs_input，持续工具失败写 failed，均结束该轮等待。默认 600 秒未收到有效结果则显示超时；已确认发送的超时任务不重发，仍接收迟到结果，并允许下一轮独立任务。发送状态不明或有人输入草稿仍会暂停，避免误发。平台原生强制权限弹窗无法仅靠 prompt 保证消失。
 
 ## 发布、升级、回退
 
