@@ -168,7 +168,10 @@ class WatchTests(unittest.TestCase):
         with patch('workbuddy.run.send_job', side_effect=finish) as sender, patch('workbuddy.run.time.sleep'):
             with self.assertRaises(KeyboardInterrupt):
                 watch_loop(self.data, self.data, {}, self.stop_after_three)
-        sender.assert_called_once_with(next_job, {})
+        sender.assert_called_once()
+        # Windows runners may expose %TEMP% through its 8.3 alias (RUNNER~1).
+        self.assertTrue(sender.call_args.args[0].samefile(next_job))
+        self.assertEqual(sender.call_args.args[1], {})
         self.assertEqual(read(self.job / 'state.json')['state'], 'timed_out')
 
 
