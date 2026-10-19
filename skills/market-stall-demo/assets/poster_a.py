@@ -30,6 +30,7 @@
   python assets/poster_a.py --print-prompt --cat 烧腊 --subject "挂满烧鹅的档口近景"
 
 默认会顺带渲染 2x PNG（2160×3240）；加 --no-render 只出 HTML。
+默认 print 模式（打印安全，整体提亮）；要旧版暗调屏幕效果加 --mode screen。
 """
 import argparse, io, json, os, shutil, subprocess, sys, time
 
@@ -44,6 +45,22 @@ TONES = {
     "fruit":   ("#9A5A16", "#1A1008", "#120B06"),
     "snack":   ("#8E2F1E", "#150A08", "#0F0706"),
     "neutral": ("#3A4A56", "#0C1114", "#080C0E"),
+}
+
+# 输出模式：print = 打印安全（默认，整体提亮防打印发黑）；screen = 旧版暗调屏幕氛围
+MODES = {
+    "print": dict(
+        photo_filter="brightness(1.14) contrast(1.04) saturate(1.06)",
+        t0=".38", t1=".10", t2=".03", b0=".38", b1=".62", b2=".72",
+        vig_blur=110, vig_spread=20, vig_a=".28",
+        grain=".05", name_shadow=".35",
+    ),
+    "screen": dict(
+        photo_filter="none",
+        t0=".58", t1=".14", t2=".06", b0=".55", b1=".92", b2=".97",
+        vig_blur=180, vig_spread=40, vig_a=".55",
+        grain=".10", name_shadow=".5",
+    ),
 }
 
 CAT_TONE = [
@@ -98,17 +115,18 @@ html,body{{width:{W}px;height:{H}px;overflow:hidden}}
 body{{position:relative;background:#0A0A08;font-family:"Microsoft YaHei","PingFang SC",sans-serif;overflow:hidden}}
 
 .photo{{position:absolute;inset:0}}
-.photo img{{display:block;width:100%;height:100%;object-fit:cover;object-position:{pos}}}
+.photo img{{display:block;width:100%;height:100%;object-fit:cover;object-position:{pos};
+  filter:{photo_filter}}}
 .gen{{background:
   radial-gradient(110% 72% at 28% 16%, {glow} 0%, rgba(0,0,0,0) 60%),
   radial-gradient(86% 64% at 84% 46%, {glow} 0%, rgba(0,0,0,0) 58%),
   radial-gradient(60% 40% at 50% 88%, {mid} 0%, rgba(0,0,0,0) 70%),
   linear-gradient(162deg, {mid} 0%, {deep} 58%, {deep} 100%)}}
 .shade{{position:absolute;inset:0;background:
-  linear-gradient(180deg,rgba(6,6,5,.58) 0%,rgba(6,6,5,.14) 22%,rgba(6,6,5,.06) 44%,
-                  rgba(6,6,5,.55) 66%,rgba(6,6,5,.92) 86%,rgba(6,6,5,.97) 100%)}}
-.vig{{position:absolute;inset:0;box-shadow:inset 0 0 180px 40px rgba(0,0,0,.55)}}
-.grain{{position:absolute;inset:0;opacity:.10;mix-blend-mode:overlay;
+  linear-gradient(180deg,rgba(6,6,5,{t0}) 0%,rgba(6,6,5,{t1}) 22%,rgba(6,6,5,{t2}) 44%,
+                  rgba(6,6,5,{b0}) 66%,rgba(6,6,5,{b1}) 86%,rgba(6,6,5,{b2}) 100%)}}
+.vig{{position:absolute;inset:0;box-shadow:inset 0 0 {vig_blur}px {vig_spread}px rgba(0,0,0,{vig_a})}}
+.grain{{position:absolute;inset:0;opacity:{grain};mix-blend-mode:overlay;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E")}}
 
 .frame{{position:absolute;left:30px;right:30px;top:30px;bottom:30px;border:1px solid rgba(255,255,255,.34)}}
@@ -131,7 +149,7 @@ body{{position:relative;background:#0A0A08;font-family:"Microsoft YaHei","PingFa
 
 .name{{position:absolute;left:48px;top:1086px;font-family:"STZhongsong","SimSun",serif;
   font-weight:700;font-size:{nameSize}px;line-height:1.08;letter-spacing:4px;color:#FFFFFF;
-  -webkit-text-stroke:.7px #FFFFFF;text-shadow:0 4px 26px rgba(0,0,0,.5);white-space:nowrap}}
+  -webkit-text-stroke:.7px #FFFFFF;text-shadow:0 3px 14px rgba(0,0,0,{name_shadow});white-space:nowrap}}
 
 .en{{position:absolute;left:62px;top:1288px;font-family:"Bahnschrift","Arial Narrow",sans-serif;
   font-size:20px;letter-spacing:9px;color:#E8E4D8}}
@@ -193,7 +211,7 @@ def name_size(name):
     return max(110, int(172 * 4 / n))
 
 
-def build_one(stall, out_dir, chrome, scale=2, do_render=True):
+def build_one(stall, out_dir, chrome, scale=2, do_render=True, mode="print"):
     key = stall.get("key") or str(int(time.time() * 1000))
     safe = "".join(ch for ch in key if ch.isalnum() or ch in "-_") or "poster"
     asset_dir = os.path.join(out_dir, "assets")
@@ -216,7 +234,7 @@ def build_one(stall, out_dir, chrome, scale=2, do_render=True):
             print("[warn] 底图不存在，改用色调底：%s" % src, file=sys.stderr)
 
     html = TPL.format(
-        W=W, H=H,
+        W=W, H=H, **MODES.get(mode, MODES["print"]),
         glow=glow, mid=mid, deep=deep,
         pos=stall.get("pos", "50% 50%"),
         photo_layer=photo_layer,
@@ -258,7 +276,9 @@ def main():
     ap.add_argument("--chrome")
     ap.add_argument("--print-prompt", action="store_true", help="只打印 AI 底图提示词，不渲染")
     ap.add_argument("--subject", help="覆盖提示词里的主体描述")
-    ap.add_argument("--tone", choices=list(TONES), help="无图时的色调（默认按 cat 推断）")
+    ap.add_argument("--tone", choices=list(TONES), help="无图时的品类色调（默认按 cat 推断）")
+    ap.add_argument("--mode", choices=["print", "screen"], default="print",
+                    help="print=打印安全(默认,整体提亮防打印发黑)；screen=旧版暗调屏幕氛围")
     # 单张参数
     for k in ["name", "en", "cat", "no", "line", "side1", "side2", "photo", "bg", "key", "pos",
               "top_en", "top_cn"]:
@@ -281,11 +301,13 @@ def main():
             raise SystemExit("单张模式至少需要 --name（底图可给 --photo / --bg，也可以都不给）")
         stalls = [dict(name=a.name, en=a.en, cat=a.cat, no=a.no, line=a.line,
                        side1=a.side1, side2=a.side2, photo=a.photo, bg=a.bg,
-                       key=a.key, pos=a.pos, top_en=a.top_en, top_cn=a.top_cn, tone=a.tone)]
+                       key=a.key, pos=a.pos, top_en=a.top_en, top_cn=a.top_cn,
+                       tone=a.tone, mode=a.mode)]
 
     for s in stalls:
         s = {k: v for k, v in s.items() if v}
-        html_path, png_path = build_one(s, out_dir, chrome, a.scale, not a.no_render)
+        html_path, png_path = build_one(s, out_dir, chrome, a.scale, not a.no_render,
+                                        mode=s.get("mode", "print"))
         print("OK", os.path.basename(png_path or html_path), "->", html_path, sep="\t")
 
 

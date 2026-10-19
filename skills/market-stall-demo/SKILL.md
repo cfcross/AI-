@@ -153,6 +153,7 @@ python assets/poster_a.py --print-prompt --cat 水产
 - 海报底图不出现任何文字（AI 生图必须写死这条），文字只由引擎叠加。
 - 不出现 AI 字样、不出现电话交互说明。
 - 版式参数不动；要另一种气质换 `--tpl`（价目表）/ `--tone`、`--subject`（海报底图）。
+- 海报默认 `--mode print`（打印安全：整体提亮、压暗减弱，防止打印出来发黑）；只在明确只用于屏幕展示时才用 `--mode screen`。批量 json 可逐条写 `"mode"`。
 
 ## 文件
 - `assets/price_board.py` — 价目表四模板引擎 + 自动字号适配 + 渲染
