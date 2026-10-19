@@ -1,0 +1,2112 @@
+{
+  "version": "2026-10-19.1",
+  "source": {
+    "file": "市场品类明细.xlsx",
+    "sheet": "品类（价格为时价）",
+    "range": "A1:E210",
+    "sha256": "2a69d21e4bbb6b0f9ce159408e24d082b76e897d5bc2b67a883adc3f7cb41730"
+  },
+  "policy": {
+    "prices_included": false,
+    "price_use": "caller_supplied_only",
+    "source_date": null,
+    "note": "原表标明价格为时价；同名不同价、规格、单位和疑似转录问题不可自动消解。listed只表示名称被列出，不代表当前在售或已鉴定物种。"
+  },
+  "entries": [
+    {
+      "row": 2,
+      "source_category": "肉类",
+      "source_name": "羊腿",
+      "terms": [
+        "羊腿"
+      ],
+      "category": "beef",
+      "status": "listed"
+    },
+    {
+      "row": 3,
+      "source_category": "肉类",
+      "source_name": "羊排",
+      "terms": [
+        "羊排"
+      ],
+      "category": "beef",
+      "status": "listed"
+    },
+    {
+      "row": 4,
+      "source_category": "肉类",
+      "source_name": "羊腩",
+      "terms": [
+        "羊腩"
+      ],
+      "category": "beef",
+      "status": "listed"
+    },
+    {
+      "row": 5,
+      "source_category": "肉类",
+      "source_name": "猪腰",
+      "terms": [
+        "猪腰"
+      ],
+      "category": "pork",
+      "status": "listed"
+    },
+    {
+      "row": 6,
+      "source_category": "肉类",
+      "source_name": "猪手",
+      "terms": [
+        "猪手"
+      ],
+      "category": "pork",
+      "status": "listed"
+    },
+    {
+      "row": 7,
+      "source_category": "肉类",
+      "source_name": "梅头肉",
+      "terms": [
+        "梅头肉"
+      ],
+      "category": "pork",
+      "status": "listed"
+    },
+    {
+      "row": 8,
+      "source_category": "肉类",
+      "source_name": "瘦肉",
+      "terms": [
+        "瘦肉"
+      ],
+      "category": "pork",
+      "status": "listed"
+    },
+    {
+      "row": 9,
+      "source_category": "肉类",
+      "source_name": "龙骨",
+      "terms": [
+        "龙骨"
+      ],
+      "category": "pork",
+      "status": "listed"
+    },
+    {
+      "row": 10,
+      "source_category": "肉类",
+      "source_name": "猪尾",
+      "terms": [
+        "猪尾"
+      ],
+      "category": "pork",
+      "status": "listed"
+    },
+    {
+      "row": 11,
+      "source_category": "肉类",
+      "source_name": "排骨",
+      "terms": [
+        "排骨"
+      ],
+      "category": "pork",
+      "status": "listed"
+    },
+    {
+      "row": 12,
+      "source_category": "肉类",
+      "source_name": "雪龙（雪花牛肉）",
+      "terms": [],
+      "category": "beef",
+      "status": "needs_review",
+      "review_note": "雪龙可能是商品称呼或品牌；括号说明不构成通用别名关系。"
+    },
+    {
+      "row": 13,
+      "source_category": "肉类",
+      "source_name": "吊龙",
+      "terms": [
+        "吊龙"
+      ],
+      "category": "beef",
+      "status": "listed"
+    },
+    {
+      "row": 14,
+      "source_category": "肉类",
+      "source_name": "肥牛",
+      "terms": [
+        "肥牛"
+      ],
+      "category": "beef",
+      "status": "listed"
+    },
+    {
+      "row": 15,
+      "source_category": "肉类",
+      "source_name": "牛筋丸",
+      "terms": [
+        "牛筋丸"
+      ],
+      "category": "fishball_tofu",
+      "status": "listed"
+    },
+    {
+      "row": 16,
+      "source_category": "肉类",
+      "source_name": "牛尾",
+      "terms": [
+        "牛尾"
+      ],
+      "category": "beef",
+      "status": "listed"
+    },
+    {
+      "row": 17,
+      "source_category": "肉类",
+      "source_name": "牛排骨",
+      "terms": [
+        "牛排骨"
+      ],
+      "category": "beef",
+      "status": "listed"
+    },
+    {
+      "row": 18,
+      "source_category": "豆制品/主食",
+      "source_name": "豆皮",
+      "terms": [
+        "豆皮"
+      ],
+      "category": "fishball_tofu",
+      "status": "listed"
+    },
+    {
+      "row": 19,
+      "source_category": "豆制品/主食",
+      "source_name": "老豆腐",
+      "terms": [
+        "老豆腐"
+      ],
+      "category": "fishball_tofu",
+      "status": "listed"
+    },
+    {
+      "row": 20,
+      "source_category": "蛋类",
+      "source_name": "鸡蛋",
+      "terms": [
+        "鸡蛋"
+      ],
+      "category": "poultry",
+      "status": "listed"
+    },
+    {
+      "row": 21,
+      "source_category": "蛋类",
+      "source_name": "鸭蛋",
+      "terms": [
+        "鸭蛋"
+      ],
+      "category": "poultry",
+      "status": "listed"
+    },
+    {
+      "row": 22,
+      "source_category": "蔬菜类",
+      "source_name": "芥菜",
+      "terms": [
+        "芥菜"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 23,
+      "source_category": "蔬菜类",
+      "source_name": "红薯叶",
+      "terms": [
+        "红薯叶"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 24,
+      "source_category": "蔬菜类",
+      "source_name": "红苋菜",
+      "terms": [
+        "红苋菜"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 25,
+      "source_category": "蔬菜类",
+      "source_name": "白萝卜",
+      "terms": [
+        "白萝卜"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 26,
+      "source_category": "蔬菜类",
+      "source_name": "茄子",
+      "terms": [
+        "茄子"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 27,
+      "source_category": "蔬菜类",
+      "source_name": "娃娃菜",
+      "terms": [
+        "娃娃菜"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 28,
+      "source_category": "蔬菜类",
+      "source_name": "生姜",
+      "terms": [
+        "生姜"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 29,
+      "source_category": "蔬菜类",
+      "source_name": "辣椒",
+      "terms": [
+        "辣椒"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 30,
+      "source_category": "蔬菜类",
+      "source_name": "葱",
+      "terms": [
+        "葱"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 31,
+      "source_category": "蔬菜类",
+      "source_name": "香菜",
+      "terms": [
+        "香菜"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 32,
+      "source_category": "蔬菜类",
+      "source_name": "秋葵",
+      "terms": [
+        "秋葵"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 33,
+      "source_category": "蔬菜类",
+      "source_name": "蒲菜",
+      "terms": [
+        "蒲菜"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 34,
+      "source_category": "蔬菜类",
+      "source_name": "水瓜",
+      "terms": [
+        "水瓜"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 35,
+      "source_category": "菌菇类",
+      "source_name": "草菇",
+      "terms": [
+        "草菇"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 36,
+      "source_category": "菌菇类",
+      "source_name": "鸡腿菇",
+      "terms": [
+        "鸡腿菇"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 37,
+      "source_category": "海鱼类",
+      "source_name": "沙丁鱼",
+      "terms": [
+        "沙丁鱼"
+      ],
+      "category": "seafood",
+      "status": "listed",
+      "source_note": "冰鲜"
+    },
+    {
+      "row": 38,
+      "source_category": "海鱼类",
+      "source_name": "小白鱼",
+      "terms": [
+        "小白鱼"
+      ],
+      "category": "seafood",
+      "status": "listed"
+    },
+    {
+      "row": 39,
+      "source_category": "海鱼类",
+      "source_name": "大眼鱼",
+      "terms": [
+        "大眼鱼"
+      ],
+      "category": "seafood",
+      "status": "listed"
+    },
+    {
+      "row": 40,
+      "source_category": "海鱼类",
+      "source_name": "泥猛",
+      "terms": [
+        "泥猛"
+      ],
+      "category": "seafood",
+      "status": "listed"
+    },
+    {
+      "row": 41,
+      "source_category": "海鱼类",
+      "source_name": "带鱼",
+      "terms": [
+        "带鱼"
+      ],
+      "category": "seafood",
+      "status": "listed"
+    },
+    {
+      "row": 42,
+      "source_category": "海鱼类",
+      "source_name": "黄花鱼",
+      "terms": [
+        "黄花鱼"
+      ],
+      "category": "seafood",
+      "status": "listed"
+    },
+    {
+      "row": 43,
+      "source_category": "海鱼类",
+      "source_name": "马鲛鱼",
+      "terms": [
+        "马鲛鱼"
+      ],
+      "category": "seafood",
+      "status": "listed"
+    },
+    {
+      "row": 44,
+      "source_category": "海鱼类",
+      "source_name": "黄脚鱼",
+      "terms": [
+        "黄脚鱼"
+      ],
+      "category": "seafood",
+      "status": "listed"
+    },
+    {
+      "row": 45,
+      "source_category": "海鱼类",
+      "source_name": "豆腐鱼",
+      "terms": [
+        "豆腐鱼"
+      ],
+      "category": "seafood",
+      "status": "listed"
+    },
+    {
+      "row": 46,
+      "source_category": "海鱼类",
+      "source_name": "鱿鱼仔",
+      "terms": [
+        "鱿鱼仔"
+      ],
+      "category": "seafood",
+      "status": "listed"
+    },
+    {
+      "row": 47,
+      "source_category": "海鱼类",
+      "source_name": "剥皮鱼",
+      "terms": [
+        "剥皮鱼"
+      ],
+      "category": "seafood",
+      "status": "listed"
+    },
+    {
+      "row": 48,
+      "source_category": "海鱼类",
+      "source_name": "白鲳鱼",
+      "terms": [
+        "白鲳鱼"
+      ],
+      "category": "seafood",
+      "status": "listed"
+    },
+    {
+      "row": 49,
+      "source_category": "海鱼类",
+      "source_name": "马头鱼",
+      "terms": [
+        "马头鱼"
+      ],
+      "category": "seafood",
+      "status": "listed"
+    },
+    {
+      "row": 50,
+      "source_category": "海鱼类",
+      "source_name": "东星斑",
+      "terms": [
+        "东星斑"
+      ],
+      "category": "seafood",
+      "status": "listed"
+    },
+    {
+      "row": 51,
+      "source_category": "海鱼类",
+      "source_name": "金枪鱼",
+      "terms": [
+        "金枪鱼"
+      ],
+      "category": "seafood",
+      "status": "listed"
+    },
+    {
+      "row": 52,
+      "source_category": "海鱼类",
+      "source_name": "章鱼仔",
+      "terms": [
+        "章鱼仔"
+      ],
+      "category": "seafood",
+      "status": "listed"
+    },
+    {
+      "row": 53,
+      "source_category": "海鱼类",
+      "source_name": "鹦哥鱼",
+      "terms": [
+        "鹦哥鱼"
+      ],
+      "category": "seafood",
+      "status": "listed"
+    },
+    {
+      "row": 54,
+      "source_category": "淡水鱼/水产",
+      "source_name": "黄鳝",
+      "terms": [
+        "黄鳝"
+      ],
+      "category": "river",
+      "status": "listed"
+    },
+    {
+      "row": 55,
+      "source_category": "淡水鱼/水产",
+      "source_name": "泥鳅",
+      "terms": [
+        "泥鳅"
+      ],
+      "category": "river",
+      "status": "listed"
+    },
+    {
+      "row": 56,
+      "source_category": "淡水鱼/水产",
+      "source_name": "白鳝",
+      "terms": [
+        "白鳝"
+      ],
+      "category": "pond_fish",
+      "status": "listed"
+    },
+    {
+      "row": 57,
+      "source_category": "淡水鱼/水产",
+      "source_name": "甲鱼",
+      "terms": [
+        "甲鱼"
+      ],
+      "category": "river",
+      "status": "listed"
+    },
+    {
+      "row": 58,
+      "source_category": "淡水鱼/水产",
+      "source_name": "黑鱼",
+      "terms": [
+        "黑鱼"
+      ],
+      "category": "pond_fish",
+      "status": "listed"
+    },
+    {
+      "row": 59,
+      "source_category": "淡水鱼/水产",
+      "source_name": "草鱼",
+      "terms": [
+        "草鱼"
+      ],
+      "category": "pond_fish",
+      "status": "listed"
+    },
+    {
+      "row": 60,
+      "source_category": "淡水鱼/水产",
+      "source_name": "福寿鱼",
+      "terms": [
+        "福寿鱼"
+      ],
+      "category": "pond_fish",
+      "status": "listed"
+    },
+    {
+      "row": 61,
+      "source_category": "淡水鱼/水产",
+      "source_name": "鱼虾",
+      "terms": [],
+      "category": "pond_fish",
+      "status": "needs_review",
+      "review_note": "鱼虾是泛称，不能推断具体虾种或鱼种。"
+    },
+    {
+      "row": 62,
+      "source_category": "淡水鱼/水产",
+      "source_name": "鱼泡",
+      "terms": [
+        "鱼泡"
+      ],
+      "category": "pond_fish",
+      "status": "listed"
+    },
+    {
+      "row": 63,
+      "source_category": "淡水鱼/水产",
+      "source_name": "脆肉鲩",
+      "terms": [
+        "脆肉鲩"
+      ],
+      "category": "pond_fish",
+      "status": "listed"
+    },
+    {
+      "row": 64,
+      "source_category": "淡水鱼/水产",
+      "source_name": "鲈鱼",
+      "terms": [
+        "鲈鱼"
+      ],
+      "category": "pond_fish",
+      "status": "listed"
+    },
+    {
+      "row": 65,
+      "source_category": "禽类",
+      "source_name": "鸡腿",
+      "terms": [
+        "鸡腿"
+      ],
+      "category": "poultry",
+      "status": "listed"
+    },
+    {
+      "row": 66,
+      "source_category": "禽类",
+      "source_name": "鸡翅",
+      "terms": [
+        "鸡翅"
+      ],
+      "category": "poultry",
+      "status": "listed"
+    },
+    {
+      "row": 67,
+      "source_category": "禽类",
+      "source_name": "鸡爪",
+      "terms": [
+        "鸡爪"
+      ],
+      "category": "poultry",
+      "status": "listed"
+    },
+    {
+      "row": 68,
+      "source_category": "禽类",
+      "source_name": "鸡胸肉",
+      "terms": [
+        "鸡胸肉"
+      ],
+      "category": "poultry",
+      "status": "listed"
+    },
+    {
+      "row": 69,
+      "source_category": "禽类",
+      "source_name": "鸡尖",
+      "terms": [
+        "鸡尖"
+      ],
+      "category": "poultry",
+      "status": "listed"
+    },
+    {
+      "row": 70,
+      "source_category": "禽类",
+      "source_name": "冰冻鸡小翅",
+      "terms": [
+        "冰冻鸡小翅",
+        "鸡小翅"
+      ],
+      "category": "frozen",
+      "status": "listed"
+    },
+    {
+      "row": 71,
+      "source_category": "禽类",
+      "source_name": "活鸡（现宰）",
+      "terms": [
+        "活鸡"
+      ],
+      "category": "poultry",
+      "status": "listed"
+    },
+    {
+      "row": 72,
+      "source_category": "禽类",
+      "source_name": "白条鸭",
+      "terms": [
+        "白条鸭"
+      ],
+      "category": "poultry",
+      "status": "listed"
+    },
+    {
+      "row": 73,
+      "source_category": "禽类",
+      "source_name": "冰冻鸭腿",
+      "terms": [
+        "冰冻鸭腿"
+      ],
+      "category": "frozen",
+      "status": "listed"
+    },
+    {
+      "row": 74,
+      "source_category": "禽类",
+      "source_name": "烧鸭",
+      "terms": [
+        "烧鸭"
+      ],
+      "category": "roast",
+      "status": "listed"
+    },
+    {
+      "row": 75,
+      "source_category": "禽类",
+      "source_name": "乳鸽",
+      "terms": [
+        "乳鸽"
+      ],
+      "category": "poultry",
+      "status": "listed"
+    },
+    {
+      "row": 76,
+      "source_category": "禽类",
+      "source_name": "熟鸭翅",
+      "terms": [
+        "熟鸭翅"
+      ],
+      "category": "roast",
+      "status": "listed"
+    },
+    {
+      "row": 77,
+      "source_category": "禽类",
+      "source_name": "盐焗鸡",
+      "terms": [
+        "盐焗鸡"
+      ],
+      "category": "roast",
+      "status": "listed"
+    },
+    {
+      "row": 78,
+      "source_category": "肉类",
+      "source_name": "后腿肉",
+      "terms": [
+        "后腿肉"
+      ],
+      "category": "pork",
+      "status": "listed"
+    },
+    {
+      "row": 79,
+      "source_category": "肉类",
+      "source_name": "五花肉",
+      "terms": [
+        "五花肉"
+      ],
+      "category": "pork",
+      "status": "listed"
+    },
+    {
+      "row": 80,
+      "source_category": "肉类",
+      "source_name": "肋排骨",
+      "terms": [
+        "肋排骨"
+      ],
+      "category": "pork",
+      "status": "listed"
+    },
+    {
+      "row": 81,
+      "source_category": "肉类",
+      "source_name": "梅肉",
+      "terms": [
+        "梅肉"
+      ],
+      "category": "pork",
+      "status": "listed"
+    },
+    {
+      "row": 82,
+      "source_category": "肉类",
+      "source_name": "扇骨",
+      "terms": [
+        "扇骨"
+      ],
+      "category": "pork",
+      "status": "listed"
+    },
+    {
+      "row": 83,
+      "source_category": "肉类",
+      "source_name": "后腱牛肉",
+      "terms": [
+        "后腱牛肉"
+      ],
+      "category": "beef",
+      "status": "listed"
+    },
+    {
+      "row": 84,
+      "source_category": "肉类",
+      "source_name": "牛腩",
+      "terms": [
+        "牛腩"
+      ],
+      "category": "beef",
+      "status": "listed"
+    },
+    {
+      "row": 85,
+      "source_category": "肉类",
+      "source_name": "冷冻羊肉卷",
+      "terms": [
+        "冷冻羊肉卷"
+      ],
+      "category": "frozen",
+      "status": "listed"
+    },
+    {
+      "row": 86,
+      "source_category": "肉类",
+      "source_name": "牛腱羊肉",
+      "terms": [],
+      "category": "other",
+      "status": "needs_review",
+      "review_note": "牛腱羊肉疑似连写或转录问题，不确定是牛肉、羊肉还是多个品项。"
+    },
+    {
+      "row": 87,
+      "source_category": "肉类",
+      "source_name": "猪肝",
+      "terms": [
+        "猪肝"
+      ],
+      "category": "pork",
+      "status": "listed"
+    },
+    {
+      "row": 88,
+      "source_category": "肉类",
+      "source_name": "猪肚",
+      "terms": [
+        "猪肚"
+      ],
+      "category": "pork",
+      "status": "listed"
+    },
+    {
+      "row": 89,
+      "source_category": "肉类",
+      "source_name": "猪板油",
+      "terms": [
+        "猪板油"
+      ],
+      "category": "pork",
+      "status": "listed"
+    },
+    {
+      "row": 90,
+      "source_category": "肉类",
+      "source_name": "粉肠",
+      "terms": [
+        "粉肠"
+      ],
+      "category": "pork",
+      "status": "listed"
+    },
+    {
+      "row": 91,
+      "source_category": "肉类",
+      "source_name": "牛肉丸",
+      "terms": [
+        "牛肉丸"
+      ],
+      "category": "fishball_tofu",
+      "status": "listed"
+    },
+    {
+      "row": 92,
+      "source_category": "肉类",
+      "source_name": "文肠",
+      "terms": [],
+      "category": "other",
+      "status": "needs_review",
+      "review_note": "文肠的确切品名待市场核实，不猜成粉肠或其他内脏。"
+    },
+    {
+      "row": 93,
+      "source_category": "其他",
+      "source_name": "酸菜",
+      "terms": [
+        "酸菜"
+      ],
+      "category": "grocery_food",
+      "status": "listed"
+    },
+    {
+      "row": 94,
+      "source_category": "其他",
+      "source_name": "咸菜包",
+      "terms": [
+        "咸菜包"
+      ],
+      "category": "grocery_food",
+      "status": "listed"
+    },
+    {
+      "row": 95,
+      "source_category": "粮油类",
+      "source_name": "东北大米",
+      "terms": [
+        "东北大米"
+      ],
+      "category": "grocery_food",
+      "status": "listed"
+    },
+    {
+      "row": 96,
+      "source_category": "粮油类",
+      "source_name": "国产籼米",
+      "terms": [
+        "国产籼米"
+      ],
+      "category": "grocery_food",
+      "status": "listed"
+    },
+    {
+      "row": 97,
+      "source_category": "粮油类",
+      "source_name": "面粉（标准粉）",
+      "terms": [
+        "面粉",
+        "标准粉"
+      ],
+      "category": "grocery_food",
+      "status": "listed"
+    },
+    {
+      "row": 98,
+      "source_category": "粮油类",
+      "source_name": "小米",
+      "terms": [
+        "小米"
+      ],
+      "category": "grocery_food",
+      "status": "listed"
+    },
+    {
+      "row": 99,
+      "source_category": "粮油类",
+      "source_name": "河粉",
+      "terms": [
+        "河粉"
+      ],
+      "category": "grocery_food",
+      "status": "listed"
+    },
+    {
+      "row": 100,
+      "source_category": "粮油类",
+      "source_name": "土豆",
+      "terms": [
+        "土豆"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 101,
+      "source_category": "粮油类",
+      "source_name": "红薯",
+      "terms": [
+        "红薯"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 102,
+      "source_category": "粮油类",
+      "source_name": "黄豆",
+      "terms": [
+        "黄豆"
+      ],
+      "category": "grocery_food",
+      "status": "listed"
+    },
+    {
+      "row": 103,
+      "source_category": "粮油类",
+      "source_name": "绿豆",
+      "terms": [
+        "绿豆"
+      ],
+      "category": "grocery_food",
+      "status": "listed"
+    },
+    {
+      "row": 104,
+      "source_category": "粮油类",
+      "source_name": "红豆",
+      "terms": [
+        "红豆"
+      ],
+      "category": "grocery_food",
+      "status": "listed"
+    },
+    {
+      "row": 105,
+      "source_category": "粮油类",
+      "source_name": "水豆腐",
+      "terms": [
+        "水豆腐"
+      ],
+      "category": "fishball_tofu",
+      "status": "listed"
+    },
+    {
+      "row": 106,
+      "source_category": "粮油类",
+      "source_name": "豆腐干（香干）",
+      "terms": [
+        "豆腐干",
+        "香干"
+      ],
+      "category": "fishball_tofu",
+      "status": "listed"
+    },
+    {
+      "row": 107,
+      "source_category": "粮油类",
+      "source_name": "腐竹",
+      "terms": [
+        "腐竹"
+      ],
+      "category": "dried",
+      "status": "listed"
+    },
+    {
+      "row": 108,
+      "source_category": "粮油类",
+      "source_name": "大豆油",
+      "terms": [
+        "大豆油"
+      ],
+      "category": "grocery_food",
+      "status": "listed"
+    },
+    {
+      "row": 109,
+      "source_category": "粮油类",
+      "source_name": "唐山（山西）",
+      "terms": [],
+      "category": "other",
+      "status": "needs_review",
+      "review_note": "唐山（山西）无法确定商品，不能猜成淮山或山药。"
+    },
+    {
+      "row": 110,
+      "source_category": "粮油类",
+      "source_name": "莲藕",
+      "terms": [
+        "莲藕"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 111,
+      "source_category": "粮油类",
+      "source_name": "洋姜（黄姜）",
+      "terms": [
+        "洋姜"
+      ],
+      "category": "vegetables",
+      "status": "needs_review",
+      "review_note": "洋姜与黄姜不建立通用等价关系，保留原称并核实括号含义。"
+    },
+    {
+      "row": 112,
+      "source_category": "粮油类",
+      "source_name": "芋头（红头）",
+      "terms": [
+        "芋头"
+      ],
+      "category": "vegetables",
+      "status": "needs_review",
+      "review_note": "芋头可识别，红头的品种或规格含义待确认。"
+    },
+    {
+      "row": 113,
+      "source_category": "粮油类",
+      "source_name": "生蒜",
+      "terms": [
+        "生蒜"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 114,
+      "source_category": "粮油类",
+      "source_name": "蒜头",
+      "terms": [
+        "蒜头"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 115,
+      "source_category": "粮油类",
+      "source_name": "油麦菜",
+      "terms": [
+        "油麦菜"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 116,
+      "source_category": "蔬菜类",
+      "source_name": "大白菜",
+      "terms": [
+        "大白菜"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 117,
+      "source_category": "蔬菜类",
+      "source_name": "油菜（上海青）",
+      "terms": [
+        "油菜",
+        "上海青"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 118,
+      "source_category": "蔬菜类",
+      "source_name": "芹菜",
+      "terms": [
+        "芹菜"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 119,
+      "source_category": "蔬菜类",
+      "source_name": "卷心菜",
+      "terms": [
+        "卷心菜"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 120,
+      "source_category": "蔬菜类",
+      "source_name": "菠菜",
+      "terms": [
+        "菠菜"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 121,
+      "source_category": "蔬菜类",
+      "source_name": "生菜",
+      "terms": [
+        "生菜"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 122,
+      "source_category": "蔬菜类",
+      "source_name": "花菜（白花菜）",
+      "terms": [
+        "花菜",
+        "白花菜"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 123,
+      "source_category": "蔬菜类",
+      "source_name": "西兰花",
+      "terms": [
+        "西兰花"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 124,
+      "source_category": "蔬菜类",
+      "source_name": "韭菜",
+      "terms": [
+        "韭菜"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 125,
+      "source_category": "蔬菜类",
+      "source_name": "西红柿",
+      "terms": [
+        "西红柿"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 126,
+      "source_category": "蔬菜类",
+      "source_name": "圆椒（甜椒）",
+      "terms": [
+        "圆椒",
+        "甜椒"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 127,
+      "source_category": "蔬菜类",
+      "source_name": "豆角（豇豆）",
+      "terms": [
+        "豆角",
+        "豇豆"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 128,
+      "source_category": "蔬菜类",
+      "source_name": "黄瓜",
+      "terms": [
+        "黄瓜"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 129,
+      "source_category": "蔬菜类",
+      "source_name": "胡萝卜",
+      "terms": [
+        "胡萝卜"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 130,
+      "source_category": "蔬菜类",
+      "source_name": "老南瓜",
+      "terms": [
+        "老南瓜"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 131,
+      "source_category": "蔬菜类",
+      "source_name": "冬瓜",
+      "terms": [
+        "冬瓜"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 132,
+      "source_category": "蔬菜类",
+      "source_name": "黄豆芽",
+      "terms": [
+        "黄豆芽"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 133,
+      "source_category": "蔬菜类",
+      "source_name": "空心菜",
+      "terms": [
+        "空心菜"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 134,
+      "source_category": "蔬菜类",
+      "source_name": "菜芯",
+      "terms": [
+        "菜芯"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 135,
+      "source_category": "蔬菜类",
+      "source_name": "萝卜",
+      "terms": [
+        "萝卜"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 136,
+      "source_category": "蔬菜类",
+      "source_name": "芥兰",
+      "terms": [
+        "芥兰"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 137,
+      "source_category": "蔬菜类",
+      "source_name": "苦瓜",
+      "terms": [
+        "苦瓜"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 138,
+      "source_category": "蔬菜类",
+      "source_name": "丝瓜",
+      "terms": [
+        "丝瓜"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 139,
+      "source_category": "蔬菜类",
+      "source_name": "莴笋",
+      "terms": [
+        "莴笋"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 140,
+      "source_category": "蔬菜类",
+      "source_name": "西洋菜",
+      "terms": [
+        "西洋菜"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 141,
+      "source_category": "蔬菜类",
+      "source_name": "小白菜",
+      "terms": [
+        "小白菜"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 142,
+      "source_category": "蔬菜类",
+      "source_name": "茼蒿",
+      "terms": [
+        "茼蒿"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 143,
+      "source_category": "蔬菜类",
+      "source_name": "苦麦菜",
+      "terms": [
+        "苦麦菜"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 144,
+      "source_category": "干菜类",
+      "source_name": "平菇",
+      "terms": [
+        "平菇"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 145,
+      "source_category": "干菜类",
+      "source_name": "金针菇",
+      "terms": [
+        "金针菇"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 146,
+      "source_category": "干菜类",
+      "source_name": "鲜香菇",
+      "terms": [
+        "鲜香菇"
+      ],
+      "category": "vegetables",
+      "status": "listed"
+    },
+    {
+      "row": 147,
+      "source_category": "干菜类",
+      "source_name": "黑木耳",
+      "terms": [
+        "黑木耳"
+      ],
+      "category": "dried",
+      "status": "listed"
+    },
+    {
+      "row": 148,
+      "source_category": "干菜类",
+      "source_name": "香菇",
+      "terms": [
+        "香菇"
+      ],
+      "category": "dried",
+      "status": "listed"
+    },
+    {
+      "row": 149,
+      "source_category": "干菜类",
+      "source_name": "黄花菜",
+      "terms": [
+        "黄花菜"
+      ],
+      "category": "dried",
+      "status": "listed"
+    },
+    {
+      "row": 150,
+      "source_category": "干菜类",
+      "source_name": "榨菜",
+      "terms": [
+        "榨菜"
+      ],
+      "category": "dried",
+      "status": "listed"
+    },
+    {
+      "row": 151,
+      "source_category": "干菜类",
+      "source_name": "干辣椒",
+      "terms": [
+        "干辣椒"
+      ],
+      "category": "dried",
+      "status": "listed"
+    },
+    {
+      "row": 152,
+      "source_category": "干菜类",
+      "source_name": "咸菜",
+      "terms": [
+        "咸菜"
+      ],
+      "category": "dried",
+      "status": "listed"
+    },
+    {
+      "row": 153,
+      "source_category": "干菜类",
+      "source_name": "萝卜干",
+      "terms": [
+        "萝卜干"
+      ],
+      "category": "dried",
+      "status": "listed"
+    },
+    {
+      "row": 154,
+      "source_category": "鲜果类",
+      "source_name": "红富士苹果",
+      "terms": [
+        "红富士苹果"
+      ],
+      "category": "fruit",
+      "status": "listed"
+    },
+    {
+      "row": 155,
+      "source_category": "鲜果类",
+      "source_name": "香蕉",
+      "terms": [
+        "香蕉"
+      ],
+      "category": "fruit",
+      "status": "listed"
+    },
+    {
+      "row": 156,
+      "source_category": "鲜果类",
+      "source_name": "鸭梨",
+      "terms": [
+        "鸭梨"
+      ],
+      "category": "fruit",
+      "status": "listed"
+    },
+    {
+      "row": 157,
+      "source_category": "鲜果类",
+      "source_name": "江西脐橙",
+      "terms": [
+        "江西脐橙"
+      ],
+      "category": "fruit",
+      "status": "listed"
+    },
+    {
+      "row": 158,
+      "source_category": "鲜果类",
+      "source_name": "国产红提",
+      "terms": [
+        "国产红提"
+      ],
+      "category": "fruit",
+      "status": "listed"
+    },
+    {
+      "row": 159,
+      "source_category": "鲜果类",
+      "source_name": "国产草莓",
+      "terms": [
+        "国产草莓"
+      ],
+      "category": "fruit",
+      "status": "listed"
+    },
+    {
+      "row": 160,
+      "source_category": "鲜果类",
+      "source_name": "水蜜桃",
+      "terms": [
+        "水蜜桃"
+      ],
+      "category": "fruit",
+      "status": "listed"
+    },
+    {
+      "row": 161,
+      "source_category": "鲜果类",
+      "source_name": "国产红心火龙果",
+      "terms": [
+        "国产红心火龙果"
+      ],
+      "category": "fruit",
+      "status": "listed"
+    },
+    {
+      "row": 162,
+      "source_category": "鲜果类",
+      "source_name": "大芒果",
+      "terms": [
+        "大芒果"
+      ],
+      "category": "fruit",
+      "status": "listed"
+    },
+    {
+      "row": 163,
+      "source_category": "鲜果类",
+      "source_name": "菠萝",
+      "terms": [
+        "菠萝"
+      ],
+      "category": "fruit",
+      "status": "listed"
+    },
+    {
+      "row": 164,
+      "source_category": "鲜果类",
+      "source_name": "哈密瓜",
+      "terms": [
+        "哈密瓜"
+      ],
+      "category": "fruit",
+      "status": "listed"
+    },
+    {
+      "row": 165,
+      "source_category": "鲜果类",
+      "source_name": "沙田柚",
+      "terms": [
+        "沙田柚"
+      ],
+      "category": "fruit",
+      "status": "listed"
+    },
+    {
+      "row": 166,
+      "source_category": "鲜果类",
+      "source_name": "榴莲",
+      "terms": [
+        "榴莲"
+      ],
+      "category": "fruit",
+      "status": "listed"
+    },
+    {
+      "row": 167,
+      "source_category": "鲜果类",
+      "source_name": "进口橙",
+      "terms": [
+        "进口橙"
+      ],
+      "category": "fruit",
+      "status": "listed"
+    },
+    {
+      "row": 168,
+      "source_category": "鲜果类",
+      "source_name": "核桃",
+      "terms": [
+        "核桃"
+      ],
+      "category": "dried",
+      "status": "listed"
+    },
+    {
+      "row": 169,
+      "source_category": "鲜果类",
+      "source_name": "花生米",
+      "terms": [
+        "花生米"
+      ],
+      "category": "dried",
+      "status": "listed"
+    },
+    {
+      "row": 170,
+      "source_category": "鲜果类",
+      "source_name": "白莲子",
+      "terms": [
+        "白莲子"
+      ],
+      "category": "dried",
+      "status": "listed"
+    },
+    {
+      "row": 171,
+      "source_category": "鲜果类",
+      "source_name": "红枣",
+      "terms": [
+        "红枣"
+      ],
+      "category": "dried",
+      "status": "listed"
+    },
+    {
+      "row": 172,
+      "source_category": "鲜果类",
+      "source_name": "干蜜枣",
+      "terms": [
+        "干蜜枣"
+      ],
+      "category": "dried",
+      "status": "listed"
+    },
+    {
+      "row": 173,
+      "source_category": "鲜果类",
+      "source_name": "无花果干",
+      "terms": [
+        "无花果干"
+      ],
+      "category": "dried",
+      "status": "listed"
+    },
+    {
+      "row": 174,
+      "source_category": "鲜果类",
+      "source_name": "桂圆肉",
+      "terms": [
+        "桂圆肉"
+      ],
+      "category": "dried",
+      "status": "listed"
+    },
+    {
+      "row": 175,
+      "source_category": "蟹类",
+      "source_name": "大闸蟹 2.5两 母",
+      "terms": [
+        "大闸蟹"
+      ],
+      "category": "river",
+      "status": "listed"
+    },
+    {
+      "row": 176,
+      "source_category": "蟹类",
+      "source_name": "大闸蟹 3两 母",
+      "terms": [
+        "大闸蟹"
+      ],
+      "category": "river",
+      "status": "listed"
+    },
+    {
+      "row": 177,
+      "source_category": "蟹类",
+      "source_name": "大闸蟹 2.5两 公",
+      "terms": [
+        "大闸蟹"
+      ],
+      "category": "river",
+      "status": "listed"
+    },
+    {
+      "row": 178,
+      "source_category": "蟹类",
+      "source_name": "大闸蟹 4两 公",
+      "terms": [
+        "大闸蟹"
+      ],
+      "category": "river",
+      "status": "listed"
+    },
+    {
+      "row": 179,
+      "source_category": "虾类",
+      "source_name": "红须虾（中）",
+      "terms": [
+        "红须虾"
+      ],
+      "category": "seafood",
+      "status": "listed"
+    },
+    {
+      "row": 180,
+      "source_category": "虾类",
+      "source_name": "九节虾（中）",
+      "terms": [
+        "九节虾"
+      ],
+      "category": "seafood",
+      "status": "listed"
+    },
+    {
+      "row": 181,
+      "source_category": "虾类",
+      "source_name": "老虾（中）",
+      "terms": [],
+      "category": "other",
+      "status": "needs_review",
+      "review_note": "老虾的品种待确认，不能直接改为老虎虾、斑节虾或龙虾。"
+    },
+    {
+      "row": 182,
+      "source_category": "虾类",
+      "source_name": "罗氏虾",
+      "terms": [
+        "罗氏虾"
+      ],
+      "category": "seafood",
+      "status": "listed"
+    },
+    {
+      "row": 183,
+      "source_category": "虾类",
+      "source_name": "基围虾",
+      "terms": [
+        "基围虾"
+      ],
+      "category": "seafood",
+      "status": "listed"
+    },
+    {
+      "row": 184,
+      "source_category": "虾类",
+      "source_name": "濑尿虾（有膏）",
+      "terms": [
+        "濑尿虾"
+      ],
+      "category": "seafood",
+      "status": "listed"
+    },
+    {
+      "row": 185,
+      "source_category": "虾类",
+      "source_name": "濑尿虾（大）",
+      "terms": [
+        "濑尿虾"
+      ],
+      "category": "seafood",
+      "status": "listed"
+    },
+    {
+      "row": 186,
+      "source_category": "虾类",
+      "source_name": "基围虾",
+      "terms": [
+        "基围虾"
+      ],
+      "category": "seafood",
+      "status": "listed",
+      "review_note": "此行计价单位与另一条同名记录不同，需核实；不能自动选用。"
+    },
+    {
+      "row": 187,
+      "source_category": "蟹类",
+      "source_name": "肉蟹 4两",
+      "terms": [
+        "肉蟹"
+      ],
+      "category": "seafood",
+      "status": "listed"
+    },
+    {
+      "row": 188,
+      "source_category": "蟹类",
+      "source_name": "肉蟹 5两",
+      "terms": [
+        "肉蟹"
+      ],
+      "category": "seafood",
+      "status": "listed"
+    },
+    {
+      "row": 189,
+      "source_category": "蟹类",
+      "source_name": "三眼蟹（中）",
+      "terms": [
+        "三眼蟹"
+      ],
+      "category": "seafood",
+      "status": "listed"
+    },
+    {
+      "row": 190,
+      "source_category": "蟹类",
+      "source_name": "冬蟹",
+      "terms": [
+        "冬蟹"
+      ],
+      "category": "seafood",
+      "status": "listed"
+    },
+    {
+      "row": 191,
+      "source_category": "蟹类",
+      "source_name": "花蟹",
+      "terms": [
+        "花蟹"
+      ],
+      "category": "seafood",
+      "status": "listed"
+    },
+    {
+      "row": 192,
+      "source_category": "蟹类",
+      "source_name": "红蟹（中）",
+      "terms": [
+        "红蟹"
+      ],
+      "category": "seafood",
+      "status": "listed"
+    },
+    {
+      "row": 193,
+      "source_category": "贝类",
+      "source_name": "花螺（小）",
+      "terms": [
+        "花螺"
+      ],
+      "category": "shellfish",
+      "status": "listed"
+    },
+    {
+      "row": 194,
+      "source_category": "贝类",
+      "source_name": "花螺（中）",
+      "terms": [
+        "花螺"
+      ],
+      "category": "shellfish",
+      "status": "listed"
+    },
+    {
+      "row": 195,
+      "source_category": "贝类",
+      "source_name": "花甲",
+      "terms": [
+        "花甲"
+      ],
+      "category": "shellfish",
+      "status": "listed"
+    },
+    {
+      "row": 196,
+      "source_category": "贝类",
+      "source_name": "生蚝",
+      "terms": [
+        "生蚝"
+      ],
+      "category": "oyster",
+      "status": "listed"
+    },
+    {
+      "row": 197,
+      "source_category": "贝类",
+      "source_name": "生蚝（按个）",
+      "terms": [
+        "生蚝"
+      ],
+      "category": "oyster",
+      "status": "listed"
+    },
+    {
+      "row": 198,
+      "source_category": "鱼类",
+      "source_name": "东星斑",
+      "terms": [
+        "东星斑"
+      ],
+      "category": "seafood",
+      "status": "listed"
+    },
+    {
+      "row": 199,
+      "source_category": "鱼类",
+      "source_name": "珍珠斑",
+      "terms": [
+        "珍珠斑"
+      ],
+      "category": "seafood",
+      "status": "listed"
+    },
+    {
+      "row": 200,
+      "source_category": "鱼类",
+      "source_name": "金鼓",
+      "terms": [
+        "金鼓"
+      ],
+      "category": "seafood",
+      "status": "listed"
+    },
+    {
+      "row": 201,
+      "source_category": "鱼类",
+      "source_name": "三刀鱼",
+      "terms": [
+        "三刀鱼"
+      ],
+      "category": "seafood",
+      "status": "listed"
+    },
+    {
+      "row": 202,
+      "source_category": "鱼类",
+      "source_name": "泥鳗",
+      "terms": [
+        "泥鳗"
+      ],
+      "category": "seafood",
+      "status": "listed"
+    },
+    {
+      "row": 203,
+      "source_category": "鱼类",
+      "source_name": "红衣鱼",
+      "terms": [
+        "红衣鱼"
+      ],
+      "category": "seafood",
+      "status": "listed"
+    },
+    {
+      "row": 204,
+      "source_category": "鱼类",
+      "source_name": "白鳝（脆）",
+      "terms": [
+        "白鳝"
+      ],
+      "category": "seafood",
+      "status": "listed"
+    },
+    {
+      "row": 205,
+      "source_category": "鱼类",
+      "source_name": "白鳝（不脆）",
+      "terms": [
+        "白鳝"
+      ],
+      "category": "seafood",
+      "status": "listed"
+    },
+    {
+      "row": 206,
+      "source_category": "鱼类",
+      "source_name": "鲈鱼",
+      "terms": [
+        "鲈鱼"
+      ],
+      "category": "seafood",
+      "status": "listed"
+    },
+    {
+      "row": 207,
+      "source_category": "鱼类",
+      "source_name": "黄花鱼",
+      "terms": [
+        "黄花鱼"
+      ],
+      "category": "seafood",
+      "status": "listed"
+    },
+    {
+      "row": 208,
+      "source_category": "鱼类",
+      "source_name": "多宝鱼",
+      "terms": [
+        "多宝鱼"
+      ],
+      "category": "seafood",
+      "status": "listed"
+    },
+    {
+      "row": 209,
+      "source_category": "丸类/加工",
+      "source_name": "马鲛丸（马鲛+猪肉）",
+      "terms": [
+        "马鲛丸"
+      ],
+      "category": "fishball_tofu",
+      "status": "listed"
+    },
+    {
+      "row": 210,
+      "source_category": "丸类/加工",
+      "source_name": "马鲛丸（纯马鲛）",
+      "terms": [
+        "马鲛丸"
+      ],
+      "category": "fishball_tofu",
+      "status": "listed"
+    }
+  ]
+}

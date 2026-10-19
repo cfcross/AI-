@@ -88,6 +88,7 @@ def create_task(text, jobs_dir, *, source_id=None, store_name='', photos=(), ski
     request['language_analysis'] = language_analysis
     request['raw_transcript'] = language_analysis['raw_text']
     request['lexicon_reference'] = 'references/market-lexicon.json'
+    request['catalog_reference'] = 'references/market-catalog.json'
     template = Template((Path(__file__).parent / 'prompt.template.txt').read_text(encoding='utf-8'))
     prompt = template.substitute(task_json=json.dumps(request, ensure_ascii=False, indent=2),
                                  generation_instruction=generation_instruction(request['generation_policy']))

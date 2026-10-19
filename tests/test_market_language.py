@@ -2,8 +2,10 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
+import copy
 
-from market_language import analyze, asr_context, lexicon
+from market_language import analyze, asr_context, lexicon, catalog
 from workbuddy.protocol import create_task
 from workbuddy.run import prepare_record, read
 
@@ -90,6 +92,86 @@ class MarketLanguageTests(unittest.TestCase):
         for rule in data['confusions']:
             self.assertIn(rule['target'], goods | venues)
         self.assertTrue(set(data['asr_priority']) <= goods | venues)
+
+    def test_supplied_catalog_keeps_all_rows_and_separates_uncertain_names(self):
+        entries = catalog()['entries']
+        self.assertEqual([r['row'] for r in entries], list(range(2, 211)))
+        self.assertEqual(len([e for e in entries if e['status'] == 'needs_review']), 8)
+        goods = {t for c in lexicon()['categories'] for t in c['terms']}
+        for entry in entries:
+            self.assertTrue(set(entry['terms']) <= goods)
+            self.assertNotIn('price', entry)
+            self.assertNotIn('unit', entry)
+        self.assertFalse({'唐山', '牛腱羊肉', '老虾', '文肠'} & goods)
+
+    def test_contextual_new_corrections_and_names(self):
+        for heard, target in [('真珠斑','珍珠斑'), ('马交鱼','马鲛鱼'), ('久节虾','九节虾'),
+                              ('鸡围虾','基围虾'), ('盐局鸡','盐焗鸡'), ('红现菜','红苋菜')]:
+            with self.subTest(heard=heard):
+                self.assertEqual(analyze(heard+'每斤35.5元')['text'], target+'每斤35.5元')
+                self.assertEqual(analyze('店名叫'+heard+'，帮我做海报')['text'], '店名叫'+heard+'，帮我做海报')
+                self.assertEqual(analyze(heard)['text'], heard)
+
+    def test_alias_hints_keep_original_and_find_source_in_both_directions(self):
+        for word, target in [('菜芯','菜心'), ('福寿鱼','罗非鱼'), ('泥猛','泥猛鱼'), ('马鲛鱼丸','马鲛丸')]:
+            result = analyze(word+'每斤33元')
+            self.assertEqual(result['text'], word+'每斤33元')
+            self.assertEqual(result['terms'][0]['canonical_hint'], target)
+            self.assertTrue(result['catalog_context']['matches'])
+        self.assertEqual(analyze('罗非鱼每斤33元')['catalog_context']['matches'][0]['source_name'], '福寿鱼')
+
+    def test_variant_candidates_do_not_rewrite_spoken_order_or_supply_prices(self):
+        cases = ['大闸蟹2.5两母的80元一只', '白鳝不脆65元一斤',
+                 '马鲛丸纯马鲛45元一斤', '基围虾33元一条', '东星斑每斤88元']
+        for raw in cases:
+            result = analyze(raw)
+            self.assertEqual(result['text'], raw)
+            self.assertEqual(result['edits'], [])
+            self.assertTrue(result['catalog_context']['matches'])
+            self.assertEqual(result['catalog_context']['price_policy'], 'caller_supplied_only')
+            for item in result['catalog_context']['matches']:
+                self.assertNotIn('price', item)
+        raw = '泥猛每斤35元，泥鳗38元，洋姜5元，芋头12元'
+        result = analyze(raw)
+        self.assertEqual(result['text'], raw)
+        self.assertEqual(result['source_review'], [])
+        self.assertEqual({t['text'] for t in result['terms']}, {'泥猛','泥鳗','洋姜','芋头'})
+
+    def test_source_ambiguity_is_not_silently_split_or_guessed(self):
+        for word in ['唐山（山西）', '牛腱羊肉', '老虾', '文肠', '雪龙', '洋姜（黄姜）', '芋头（红头）']:
+            raw = word+'35元一斤'
+            result = analyze(raw)
+            self.assertEqual(result['text'], raw)
+            self.assertEqual(result['terms'], [])
+            self.assertTrue(result['source_review'])
+            self.assertEqual(result['catalog_context']['matches'][0]['status'], 'needs_review')
+
+    def test_existing_valid_goods_cannot_become_new_correction_targets(self):
+        data = copy.deepcopy(lexicon())
+        data['confusions'].append({'heard':'泥猛','target':'泥鳗','gate':'product'})
+        with patch('market_language.lexicon', return_value=data):
+            self.assertEqual(analyze('泥猛每斤35元')['text'], '泥猛每斤35元')
+
+    def test_new_generic_venues_are_not_store_names(self):
+        for word in ['鱼类档口','海鲜档口','鱼类摊位','水产市集']:
+            result = analyze('帮我做一张'+word+'的海报')
+            self.assertEqual(result['protected_names'], [])
+            self.assertEqual(result['venues'][0]['group'], 'aquatic_sales')
+
+    def test_new_catalog_metadata_survives_record_to_prompt(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            raw = '东兴班每斤88元，大闸蟹2.5两母的80元一只'
+            analysis = analyze(raw)
+            record = root/'record.json'
+            record.write_text(json.dumps({'id':'catalog-example','reason':'hangup','text':analysis['text'],
+                                          'correction':analysis}),encoding='utf-8')
+            job = prepare_record(record, root, root)
+            request = read(job/'request.json')
+            self.assertEqual(request['language_analysis']['catalog_context'], analysis['catalog_context'])
+            self.assertEqual(request['transcript'], raw.replace('东兴班','东星斑'))
+            self.assertEqual(request['store_name'], '')
+            self.assertEqual(request['language_analysis']['catalog_context']['price_policy'], 'caller_supplied_only')
 
 
 if __name__ == '__main__':

@@ -35,10 +35,10 @@ function render(s){
  $('statusText').textContent=s.message||'';$('phoneStatus').className='status '+(s.phase==='recording'?'recording':'');
  $('spokenLabel').textContent=busy?'上一轮识别 · 本轮录音结束后更新':'最近一次识别';
  $('transcript').textContent=record?.text||record?.error||(record?'本轮未识别到有效语音，请重新拿起电话。':'说出店名、商品、价格和单位。');
- const correction=record?.correction,edits=correction?.edits||[],uncertain=correction?.uncertain||[];
+ const correction=record?.correction,edits=correction?.edits||[],uncertain=correction?.uncertain||[],sourceReview=correction?.source_review||[];
  $('correctionSummary').textContent=edits.length?'已校正 '+edits.length+' 处：'+edits.map(e=>e.original+' → '+e.replacement).join('；'):'';
- $('correctionDetails').hidden=!correction||(!edits.length&&!uncertain.length);
- $('correctionRaw').textContent=correction?'识别原文：'+correction.raw_text+(uncertain.length?'\n已保留原词，待核对：'+uncertain.map(e=>e.original+'（可能为 '+e.replacement+'）').join('；'):''):'';
+ $('correctionDetails').hidden=!correction||(!edits.length&&!uncertain.length&&!sourceReview.length);
+ $('correctionRaw').textContent=correction?'识别原文：'+correction.raw_text+(uncertain.length?'\n已保留原词，待核对：'+uncertain.map(e=>e.original+'（可能为 '+e.replacement+'）').join('；'):'')+(sourceReview.length?'\n市场原表待核实，已保留：'+sourceReview.map(e=>e.text+'（'+e.reason+'）').join('；'):''):'';
  $('recordMeta').textContent=record?new Date(record.time).toLocaleTimeString('zh-CN')+' · 录音 '+record.seconds.toFixed(1)+' 秒 · 已保存到本地':'说完后放下听筒';
  const waiting=['prepared','sending','waiting_desktop','submission_unknown'].includes(task?.state);
  const done=task?.state==='completed';let step=busy?0:done?3:waiting?1:task?.progress?.stage==='understanding'?1:task?2:-1;

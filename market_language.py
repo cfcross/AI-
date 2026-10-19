@@ -12,6 +12,27 @@ def lexicon():
     return json.loads(LEXICON.read_text(encoding='utf-8'))
 
 
+@lru_cache(maxsize=1)
+def catalog():
+    return json.loads(LEXICON.with_name('market-catalog.json').read_text(encoding='utf-8'))
+
+
+def source_review_spans(text):
+    """Questionable transcription in the source is evidence to retain, not repair."""
+    spans = []
+    for entry in catalog()['entries']:
+        if entry['status'] != 'needs_review':
+            continue
+        # Even a shorter mention of 老虾/雪龙 is not permission to guess its species.
+        name = re.split(r'[（(]', entry['source_name'])[0]
+        if name in entry['terms']:
+            name = entry['source_name']  # 芋头 alone is valid; only its unclear qualifier needs review.
+        for match in re.finditer(re.escape(name), text):
+            spans.append({'start': match.start(), 'end': match.end(), 'text': match.group(),
+                          'row': entry['row'], 'reason': entry['review_note']})
+    return spans
+
+
 def asr_context(extra='', store_names=()):
     data = lexicon()
     words = list(dict.fromkeys([*store_names, *data['asr_priority']]))
@@ -37,7 +58,11 @@ def protected_spans(text, names):
         spans += [{'start': m.start(), 'end': m.end(), 'text': name, 'kind': 'explicit_name'}
                   for m in re.finditer(re.escape(name), text)]
     # An unregistered proper-name-like prefix plus shop suffix is protected too.
+    venues = {v for group in lexicon()['venue_groups'] for v in group['aliases']}
     for m in re.finditer(r'[\u4e00-\u9fffA-Za-z0-9]{2,18}(?:海鲜档|海鲜店|鱼档|鱼铺|饭店|餐馆|酒楼|商行|档口|菜馆|餐厅)', text):
+        generic = re.sub(r'^(?:(?:帮我|给我|请|生成|制作|做|画|一张|一个|我的|我家|这家|这个))+', '', m.group())
+        if generic in venues:
+            continue
         spans.append({'start': m.start(), 'end': m.end(), 'text': m.group(), 'kind': 'possible_name'})
     return spans
 
@@ -80,6 +105,7 @@ def evidence(text, start, end, gate):
 def mentions(text, data, protected):
     found = []
     entries = {}
+    aliases = {alias: group for group in data['alias_groups'] for alias in group['aliases']}
     for category in data['categories']:
         if category['id'] in ('cold_storage', 'other'):
             continue
@@ -90,23 +116,51 @@ def mentions(text, data, protected):
     for term in sorted(entries, key=len, reverse=True):
         for m in re.finditer(re.escape(term), text):
             if not overlaps(m.start(), m.end(), occupied):
-                found.append({'text': term, 'categories': entries[term], 'start': m.start(), 'end': m.end()})
+                item = {'text': term, 'categories': entries[term], 'start': m.start(), 'end': m.end()}
+                if term in aliases:
+                    item['canonical_hint'] = aliases[term]['canonical']
+                    item['alias_note'] = aliases[term]['note']
+                found.append(item)
                 occupied.append({'start': m.start(), 'end': m.end()})
     return sorted(found, key=lambda x: x['start'])
+
+
+def source_context(terms, review_spans):
+    """Small, price-free source hints; all variants remain candidates, not an order."""
+    words = {v for term in terms for v in (term['text'], term.get('canonical_hint')) if v}
+    for group in lexicon()['alias_groups']:
+        family = {group['canonical'], *group['aliases']}
+        if words.intersection(family):
+            words.update(family)
+    rows = {span['row'] for span in review_spans}
+    matches = []
+    for entry in catalog()['entries']:
+        if entry['row'] in rows or words.intersection(entry['terms']):
+            matches.append({k: entry[k] for k in ('row', 'source_name', 'category', 'status', 'review_note') if k in entry})
+    return {'version': catalog()['version'], 'reference': 'references/market-catalog.json',
+            'matches': matches[:24], 'has_more': len(matches) > 24,
+            'price_policy': 'caller_supplied_only',
+            'variant_policy': 'reference_candidates_only_preserve_spoken_specifications'}
 
 
 def analyze(text, store_names=(), enabled=True):
     data = lexicon()
     protected = protected_spans(text, [*data['registered_store_names'], *store_names])
+    source_spans = source_review_spans(text)
+    goods = {term for c in data['categories'] for term in c['terms']}
     edits, uncertain, occupied = [], [], []
     if enabled:
         for rule in data['confusions']:
             for m in re.finditer(re.escape(rule['heard']), text):
-                if overlaps(m.start(), m.end(), protected + occupied):
+                if overlaps(m.start(), m.end(), protected + occupied + source_spans):
                     continue
                 if rule['gate'] == 'venue' and dish_evidence(text, m.start(), m.end()):
                     continue  # A valid dish is not an unresolved typo.
                 reason = evidence(text, m.start(), m.end(), rule['gate'])
+                # A valid commodity cannot become another one just because a future
+                # maintainer adds it to the confusion table (e.g. 泥猛 vs 泥鳗).
+                if rule['gate'] == 'product' and rule['heard'] in goods:
+                    reason = None
                 item = {'start': m.start(), 'end': m.end(), 'original': m.group(), 'replacement': rule['target']}
                 if reason:
                     edits.append({**item, 'reason': reason, 'field': rule['gate']})
@@ -117,6 +171,7 @@ def analyze(text, store_names=(), enabled=True):
     for edit in sorted(edits, key=lambda x: x['start'], reverse=True):
         corrected = corrected[:edit['start']] + edit['replacement'] + corrected[edit['end']:]
     protected_final = protected_spans(corrected, [*data['registered_store_names'], *store_names])
+    source_final = source_review_spans(corrected)
     venues = []
     for group in data['venue_groups']:
         for alias in sorted(group['aliases'], key=len, reverse=True):
@@ -124,7 +179,9 @@ def analyze(text, store_names=(), enabled=True):
                 if not overlaps(m.start(), m.end(), protected_final + venues):
                     venues.append({'text': alias, 'group': group['id'], 'start': m.start(), 'end': m.end()})
     # Venue equivalence classifies intent; it never rewrites "market" to "stall".
+    terms = mentions(corrected, data, protected_final + venues + source_final)
     return {'version': data['version'], 'raw_text': text, 'text': corrected, 'edits': sorted(edits, key=lambda x:x['start']),
             'uncertain': uncertain, 'protected_names': protected_final,
-            'terms': mentions(corrected, data, protected_final + venues), 'venues': venues,
-            'method': 'context_gated_lexicon_v1' if enabled else 'disabled'}
+            'terms': terms, 'venues': venues, 'source_review': source_final,
+            'catalog_context': source_context(terms, source_final),
+            'method': 'context_gated_lexicon_v2' if enabled else 'disabled'}

@@ -32,3 +32,5 @@ WorkBuddy读取每轮prompt.txt，契约以workbuddy/prompt.template.txt、proto
 `correction` / 任务 `language_analysis` 包含 `version, raw_text, text, edits, uncertain, protected_names, terms, venues, method`。edits 偏移针对纠偏前文字，terms/venues/protected_names 偏移针对最终文字。`raw_transcript` 保留任务的纠偏前文字。terms 是最长词表匹配线索，不是订单：还要理解否定、范围、举例。
 
 同义场所只归类，原文字不替换。明确或登记店名受到保护；语境不足的候选不应用，正确菜品不强改。网页展示最终文字、修改提示和可展开原文；历史任务不重新纠偏、生成或打印。
+
+2026-10-19新增字段（兼容旧记录）：`terms[].canonical_hint/alias_note` 是别名解释；`source_review` 为原表待核实词及最终文本偏移；`catalog_context` 含相关原表品名/规格候选、行号、状态，最多24条，更多时 `has_more=true`。这些字段不构成订单或纠错许可。请求提供 `catalog_reference`。`price_policy=caller_supplied_only`：不注入原表价格，不推断缺失单位，任何规格均以口述为准。来源疑点阻止拆成似是而非的商品；正常独立“洋姜/芋头”不因原表不明括号而被标为疑词。`method=context_gated_lexicon_v2` 仍是离线规则，无新模型或网络步骤。

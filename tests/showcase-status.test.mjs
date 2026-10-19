@@ -75,3 +75,23 @@ test('showcase presents corrected text and keeps raw wording inspectable', () =>
   assert.match(elements.get('correctionRaw').textContent, /东兴班每斤88元/);
   assert.equal(elements.get('correctionDetails').hidden, false);
 });
+
+test('source ambiguity is visible without fabricating a correction', () => {
+  const elements = new Map();
+  const element = () => ({textContent: '', children: [], append() {}, replaceChildren() {}});
+  const document = {getElementById(id) {
+    if (!elements.has(id)) elements.set(id, element());
+    return elements.get(id);
+  }, createElement: element};
+  const context = vm.createContext({document, snapshot: {
+    phase: 'ready', history: [{time:'2026-10-19',seconds:3,text:'老虾35元一斤',
+      correction:{raw_text:'老虾35元一斤',edits:[],uncertain:[],
+        source_review:[{text:'老虾',reason:'具体品种待核实'}]}}],pipeline:{tasks:[]},
+  }});
+  vm.runInContext(script, context);
+  vm.runInContext('render(snapshot)', context);
+  assert.equal(elements.get('transcript').textContent,'老虾35元一斤');
+  assert.equal(elements.get('correctionSummary').textContent,'');
+  assert.equal(elements.get('correctionDetails').hidden,false);
+  assert.match(elements.get('correctionRaw').textContent,/老虾（具体品种待核实）/);
+});

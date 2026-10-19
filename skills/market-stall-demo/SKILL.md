@@ -11,7 +11,7 @@ agent_created: true
 **价目表引擎**（assets/price_board.py，四套模板）或 **海报引擎**（assets/poster_a.py，模板 A），
 缺的文案从白名单池补齐，店名按规则代拟，底图没有实拍就 AI 生成。
 
-**整条链路只有一样东西不能编：价格。** 其余缺口都用规则补，不折腾商户。
+商品、规格、价格、单位和真实店名按商户原话保留。允许按下文规则补充通用文案和代拟店名。
 
 ## 电话自动化任务的授权与交付
 
@@ -28,6 +28,8 @@ agent_created: true
 ## 接住一句话（核心流程）
 
 先处理商品/场所/菜品/店名的角色，遵循 [菜市场语言与纠偏规则](references/market-language.md)。商品和同义场所词典在 [market-lexicon.json](references/market-lexicon.json)，按相关类别查阅。电话任务先读 language_analysis：已校正 transcript 是网页显示的最终文字；保护明确店名，不把商品主题当店名，不擅自应用 uncertain 候选。海鲜市场、鱼类市集、鱼摊共享水产意图，但保留场所规模；鱼汤也是合法菜品。数字/单位不因纠偏变化。
+
+市场明细的品名、规格和待核实原词见 [market-catalog.json](references/market-catalog.json)。优先使用任务的 catalog_context/source_review 和别名线索，不全表扫描；参考候选不是订单，不自动补商品、规格或价格。大闸蟹公母与重量、白鳝脆/不脆、马鲛丸配料等按口述保留，来源疑点不作为自动纠错目标。真实店名继续等待调研补充。
 
 商贩的输入很模糊，按五步走：
 

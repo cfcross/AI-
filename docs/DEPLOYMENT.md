@@ -43,6 +43,8 @@
 
 共享词表为 `skills/market-stall-demo/references/market-lexicon.json`：22类来自现场布局图，商品为常见词扩充，不是实地库存。新增相似词先添加语境正反例测试；不要把所有商品同音词无条件替换。`鱼汤`、真实店名等歧义词可能保留，网页提供原文和候选查看。
 
+2026-10-19市场明细更新：同时分发 `references/market-catalog.json`，其中209条源品名保留行号与规格，不含报价；热词共839个去重分类词，ASR只注入最多90个优先词。原Excel及含价提取结果保存在现场 `data/reference/market-20261019/`，不进入Git或源码包。8条品名/括号含义待核实，不能自动当错字修正。调研后分别更新该行状态、词表与正反例测试，重新安装skill并重启程序。别名表示理解关系，不自动改显示文字；表中没出现的有效常见词继续保留。
+
 ```powershell
 .\.venv\Scripts\python.exe scripts/doctor.py
 .\start.cmd
